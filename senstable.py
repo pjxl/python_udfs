@@ -5,9 +5,11 @@ def senstable(rows, cols,
               col_val_format=None,
               cell_val_format=None,
               gradient_color='royalblue',
-              highlight_between=None
+              highlight_between=None,
+              title=None,
+              caption=None
              ):
-    
+  
     """
     Generate and format a 2-dimensional sensitivity table.
     
@@ -28,6 +30,8 @@ def senstable(rows, cols,
         gradient_color: The primary color for the table's gradient color map (passed to pandas.io.formats.style.Styler.background_gradient).
         
         highlight_between: A dict object with keywords arguments to be passed to pandas.io.formats.style.Styler.highlight_between.
+        
+        title: A string object to be passed to the title of the table.
     """
     
     import pandas as pd
@@ -61,7 +65,7 @@ def senstable(rows, cols,
     # Designate and apply standard table styling
     index_names = {
         'selector': '.index_name',
-        'props': 'font-style: italic; color: darkgrey; font-weight:normal;'
+        'props': 'font-style: italic; color: white; font-weight:bold; background-color: #000066;'
     }
     headers = {
         'selector': 'th:not(.index_name)',
@@ -77,4 +81,4 @@ def senstable(rows, cols,
     if highlight_between:
         t = t.highlight_between(**highlight_between)
     
-    return t
+    return t.set_table_attributes("style='display:inline'").set_caption(title)
