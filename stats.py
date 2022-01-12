@@ -27,7 +27,7 @@ def ztest_2prop(x_treat, n_treat, x_ctrl, n_ctrl, alpha=0.05, ha='two-sided'):
   
   # Raise an error if a valid ha value is not provided
   if ha not in valid_ha:
-    raise ValueError('"ha" must be one of %r.' % valid_ha) 
+      raise ValueError('"ha" must be one of %r.' % valid_ha) 
 
   # Calculate relative proportions
   p_treat = x_treat/n_treat
@@ -49,7 +49,7 @@ def ztest_2prop(x_treat, n_treat, x_ctrl, n_ctrl, alpha=0.05, ha='two-sided'):
   # Calculate the critical z-score
   z_critical = stats.norm.ppf(1 - alpha / (1 + (not one_sided)))
   if ha[0] == 'l':
-    z_critical *= -1
+      z_critical *= -1
 
   # Find the lower and upper CIs
   # n.b.: in units of the difference between p_treat and p_ctrl
@@ -64,8 +64,8 @@ def ztest_2prop(x_treat, n_treat, x_ctrl, n_ctrl, alpha=0.05, ha='two-sided'):
   # Function to format decimals as percentages for print-out readability
   # Optionally, prepend a sign (+/-) before a percentage (e.g., when representing lift estimates)
   def format_pct_str(x, precision=None, sign=False):
-    pct = str(round(x*100, precision)) + '%'
-    return '+' + pct if x >= 0 else pct
+      pct = str(round(x*100, precision)) + '%'
+      return '+' + pct if x >= 0 else pct
 
   # Star indicator if the diff in proportions was statsig
   sig = '*' if p <= alpha else ''
@@ -86,4 +86,4 @@ def ztest_2prop(x_treat, n_treat, x_ctrl, n_ctrl, alpha=0.05, ha='two-sided'):
              'diff ({0:.0f}% CI upper)'.format(100*(1-alpha))])
   
   with pd.option_context('display.precision', 10):
-    return out_df
+      return out_df
