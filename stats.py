@@ -172,8 +172,8 @@ def welch_ttest(treat, ctrl, alpha=0.05, ha='two-sided'):
 
     # DataFrame with all test outputs of interest
     out_df = pd.DataFrame(
-      {'': [mean_ctrl, mean_treat, z, p, DoF, lift, mean_treat-treat_ctrl, ci_lwr, ci_upr]},
-      index=['control', 'treatment', 'z-score', 'p-value', 'DoF', 'lift', 'diff',
+      {'': [mean_ctrl, mean_treat, t, p, DoF, lift, mean_treat-treat_ctrl, ci_lwr, ci_upr]},
+      index=['control', 'treatment', 't-score', 'p-value', 'DoF', 'lift', 'diff',
              'diff ({0:.0f}% CI lower)'.format(100*(1-alpha)),
              'diff ({0:.0f}% CI upper)'.format(100*(1-alpha))])
 
