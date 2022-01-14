@@ -6,12 +6,12 @@ import pandas as pd
 
 def confint(x, stat, se, ha='two-sided'):
     if ha[0] == 'l':
-        ci_lwr = 'infinite'
+        ci_lwr = None
     else:
         ci_lwr = x - stat * se
     
     if ha[0] == 'r':
-        ci_upr = 'infinite'
+        ci_upr = None
     else:
         ci_upr = x + stat * se
 
