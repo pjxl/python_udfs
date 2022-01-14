@@ -108,20 +108,34 @@ def welch_ttest(treat, ctrl, alpha=0.05, ha='two-sided'):
         raise ValueError('"ha" must be one of %r.' % valid_ha)
 
     treat, ctrl = [pd.Series(i) for i in (treat, ctrl)]
-
-    t, p = stats.ttest_ind(treat, ctrl, equal_var=False)
-    one_sided = ha[0] in {'g', 'l'}
-    p *= 2-one_sided
-
-    # Welch-Satterthwaite degrees of freedom
-    dof = (treat.var()/treat.size + ctrl.var()/ctrl.size)**2 / ((treat.var()/treat.size)**2 / (treat.size-1) + (ctrl.var()/ctrl.size)**2 / (ctrl.size-1))
-
+    
+    # Get each group's sample size 
+    n_treat, n_ctrl = [i.count() for i in (treat, ctrl)]
+    
+    # Get the mean of each group
+    mean_treat, mean_ctrl = [i.mean() for i in (treat, ctrl)]
+    
+    # Get the variance of each group
     var_treat, var_ctrl = [i.var(ddof=1) for i in (treat, ctrl)]
-
+    
+    # Calculate the pooled standard error
     se = var_treat/treat.count() + var_ctrl/ctrl.count()
     se = sqrt(se)
     
+    t = (mean_treat-mean_ctrl) / se
+    
+    # Welch-Satterthwaite degrees of freedom
+    dof = (treat.var()/treat.size + ctrl.var()/ctrl.size)**2 / ((treat.var()/treat.size)**2 / (treat.size-1) + (ctrl.var()/ctrl.size)**2 / (ctrl.size-1))
+    
+    # Calculate the p-value associated with t and dof
+    p = 1-stats.t.cdf(abs(z), dof)
+    one_sided = ha[0] in {'g', 'l'}
+    p *= 2-one_sided
+    
+    #t, p = stats.ttest_ind(treat, ctrl, equal_var=False, )
+    
     # Calculate the critical t-score
+    one_sided = ha[0] in {'g', 'l'}
     t_critical = stats.t.ppf(1 - alpha / (1 + (not one_sided)), dof)
     if ha[0] == 'l':
         t_critical *= -1
