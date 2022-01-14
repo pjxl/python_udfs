@@ -129,20 +129,16 @@ def welch_ttest(treat, ctrl, alpha=0.05, ha='two-sided'):
     
     # Calculate the p-value associated with t and dof
     p = 1-stats.t.cdf(abs(t), dof)
-    print('p is now:', p)
     one_sided = ha[0] in {'g', 'l'}
     p *= 2-one_sided
-    print('p is now:', p)
     
     #t, p = stats.ttest_ind(treat, ctrl, equal_var=False, )
     
     # Calculate the critical t-score
-    one_sided = ha[0] in {'g', 'l'}
     t_critical = stats.t.ppf(1 - alpha / (1 + (not one_sided)), dof)
     if ha[0] == 'l':
         t_critical *= -1
     
     ci_lwr, ci_upr = confint(mean_treat-mean_ctrl, t_critical, se)
-    print('p is now:', p)
 
     return t, p, dof, ci_lwr, ci_upr
