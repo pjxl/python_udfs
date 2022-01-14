@@ -60,7 +60,7 @@ def ztest_2prop(x_treat, n_treat, x_ctrl, n_ctrl, alpha=0.05, ha='two-sided'):
 
     # Find the lower and upper CIs
     # n.b.: in units of the difference between p_treat and p_ctrl
-    ci_lwr, ci_upr = conf_int(p_treat-p_ctrl, z_critical, se)
+    ci_lwr, ci_upr = confint(p_treat-p_ctrl, z_critical, se)
 
     # Calculate the pct lift
     lift = p_treat/p_ctrl-1
@@ -112,4 +112,4 @@ def welch_ttest(treat, ctrl):
     se = var_treat/treat.count() + var_ctrl/ctrl.count()
     se = sqrt(se)
 
-    return t, p, dof, conf_int(treat.mean()-ctrl.mean(), t, se)
+    return t, p, dof, confint(treat.mean()-ctrl.mean(), t, se)
