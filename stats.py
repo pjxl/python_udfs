@@ -57,10 +57,8 @@ def ztest_2prop(x_treat, n_treat, x_ctrl, n_ctrl, alpha=0.05, ha='two-sided'):
 
     # Calculate the critical z-score
     z_critical = stats.norm.ppf(1 - alpha / (1 + (not one_sided)))
-    if ha[0] == 'l':
-        z_critical *= -1
 
-    # Find the lower and upper CIs
+    # Find the lower and upper CIs boundaries
     # n.b.: in units of the difference between p_treat and p_ctrl
     ci_lwr, ci_upr = confint(p_treat-p_ctrl, z_critical, se)
 
@@ -136,9 +134,9 @@ def welch_ttest(treat, ctrl, alpha=0.05, ha='two-sided'):
     
     # Calculate the critical t-score
     t_critical = stats.t.ppf(1 - alpha / (1 + (not one_sided)), dof)
-    if ha[0] == 'l':
-        t_critical *= -1
     
+    # Find the lower and upper CIs boundaries
+    # n.b.: in units of the difference between mean_treat and mean_ctrl
     ci_lwr, ci_upr = confint(mean_treat-mean_ctrl, t_critical, se)
     
     # Calculate the pct lift
