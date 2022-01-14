@@ -128,7 +128,7 @@ def welch_ttest(treat, ctrl, alpha=0.05, ha='two-sided'):
     dof = (treat.var()/treat.size + ctrl.var()/ctrl.size)**2 / ((treat.var()/treat.size)**2 / (treat.size-1) + (ctrl.var()/ctrl.size)**2 / (ctrl.size-1))
     
     # Calculate the p-value associated with t and dof
-    p = 1-stats.t.cdf(abs(z), dof)
+    p = 1-stats.t.cdf(abs(t), dof)
     one_sided = ha[0] in {'g', 'l'}
     p *= 2-one_sided
     
