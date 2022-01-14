@@ -1,6 +1,10 @@
+from math import sqrt
+import scipy.stats as stats
+import numpy as np
+import pandas as pd
+
+
 def confint(x, stat, se):
-    """
-    """
     ci_lwr = x - stat * se
     ci_upr = x + stat * se
 
@@ -25,10 +29,6 @@ def ztest_2prop(x_treat, n_treat, x_ctrl, n_ctrl, alpha=0.05, ha='two-sided'):
 
         ha: (string; default='two-sided') The desired directionality of the test. A valid input is one of ('two-sided', 't', 'greater', 'g', 'less', 'l').
     """
-
-    from math import sqrt
-    import scipy.stats as stats
-    import pandas as pd
 
     # Assert valid values for ha
     valid_ha = {'two-sided', 't', 'greater', 'g', 'less', 'l'}
@@ -97,14 +97,21 @@ def ztest_2prop(x_treat, n_treat, x_ctrl, n_ctrl, alpha=0.05, ha='two-sided'):
         return out_df
 
 
-def welch_ttest(treat, ctrl):
+def welch_ttest(treat, ctrl, alpha=0.05, ha='two-sided'):
+    
+    # Assert valid values for ha
+    valid_ha = {'two-sided', 't', 'greater', 'g', 'less', 'l'}
+    ha = ha.lower()
 
-    from math import sqrt
-    from scipy.stats import ttest_ind
+    # Raise an error if a valid ha value is not provided
+    if ha not in valid_ha:
+        raise ValueError('"ha" must be one of %r.' % valid_ha)
 
     treat, ctrl = [pd.Series(i) for i in (treat, ctrl)]
 
-    t, p = ttest_ind(treat, ctrl, equal_var=False)
+    t, p = stats.ttest_ind(treat, ctrl, equal_var=False)
+    one_sided = ha[0] in {'g', 'l'}
+    p *= 2-one_sided
 
     # Welch-Satterthwaite degrees of freedom
     dof = (treat.var()/treat.size + ctrl.var()/ctrl.size)**2 / ((treat.var()/treat.size)**2 / (treat.size-1) + (ctrl.var()/ctrl.size)**2 / (ctrl.size-1))
@@ -113,5 +120,12 @@ def welch_ttest(treat, ctrl):
 
     se = var_treat/treat.count() + var_ctrl/ctrl.count()
     se = sqrt(se)
+    
+    # Calculate the critical t-score
+    t_critical = stats.t.ppf(1 - alpha / (1 + (not one_sided)), dof)
+    if ha[0] == 'l':
+        t_critical *= -1
+    
+    ci_lwr, ci_upr = confint(treat.mean()-ctrl.mean(), t_critical, se)
 
-    return t, p, dof, confint(treat.mean()-ctrl.mean(), t, se)
+    return t, p, dof, ci_lwr, ci_upr
