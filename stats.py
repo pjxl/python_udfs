@@ -1,4 +1,3 @@
-
 def conf_int(x, stat, se):  
   ci_lwr = x - stat * se
   ci_upr = x + stat * se
@@ -94,3 +93,23 @@ def ztest_2prop(x_treat, n_treat, x_ctrl, n_ctrl, alpha=0.05, ha='two-sided'):
   
   with pd.option_context('display.precision', 10):
       return out_df
+
+    
+def welch_ttest(treat, ctrl):
+
+    from math import sqrt
+    from scipy.stats import ttest_ind
+
+    treat, ctrl = [pd.Series(i) for i in (treat, ctrl)]
+
+    t, p = ttest_ind(treat, ctrl, equal_var=False)
+
+    # Welch-Satterthwaite degrees of freedom 
+    dof = (treat.var()/treat.size + ctrl.var()/ctrl.size)**2 / ((treat.var()/treat.size)**2 / (treat.size-1) + (ctrl.var()/ctrl.size)**2 / (ctrl.size-1))
+
+    var_treat, var_ctrl = [i.var(ddof=1) for i in (treat, ctrl)]
+
+    se = var_treat/treat.count() + var_ctrl/ctrl.count()
+    se = sqrt(se)
+
+    return t, p, dof, conf_int(treat.mean()-ctrl.mean(), t, se)    
