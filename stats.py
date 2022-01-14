@@ -5,15 +5,17 @@ import pandas as pd
 
 
 def confint(x, stat, se, ha='two-sided'):
-    if ha[0] == 'l':
-        ci_lwr = None
-    else:
-        ci_lwr = x - stat * se
+    ci_lwr = x - stat * se
+    ci_upr = x + stat * se
+#     if ha[0] == 'l':
+#         ci_lwr = None
+#     else:
+#         ci_lwr = x - stat * se
     
-    if ha[0] == 'r':
-        ci_upr = None
-    else:
-        ci_upr = x + stat * se
+#     if ha[0] == 'r':
+#         ci_upr = None
+#     else:
+#         ci_upr = x + stat * se
 
     return ci_lwr, ci_upr
 
