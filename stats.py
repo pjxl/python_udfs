@@ -119,13 +119,13 @@ def welch_ttest(treat, ctrl, alpha=0.05, ha='two-sided'):
     var_treat, var_ctrl = [i.var(ddof=1) for i in (treat, ctrl)]
     
     # Calculate the pooled standard error
-    se = var_treat/treat.count() + var_ctrl/ctrl.count()
+    se = var_treat/n_treat + var_ctrl/n_ctrl
     se = sqrt(se)
     
     t = (mean_treat-mean_ctrl) / se
     
-    # Welch-Satterthwaite degrees of freedom
-    dof = (treat.var()/treat.size + ctrl.var()/ctrl.size)**2 / ((treat.var()/treat.size)**2 / (treat.size-1) + (ctrl.var()/ctrl.size)**2 / (ctrl.size-1))
+    # Welch-Satterthwaite degrees of freedom    
+    dof = (var_treat/n_treat + var_ctrl/n_ctrl)**2 / ((var_treat/n_treat)**2 / (n_treat-1) + (var_ctrl/n_ctrl)**2 / (n_ctrl-1))
     
     # Calculate the p-value associated with t and dof
     p = 1-stats.t.cdf(abs(t), dof)
@@ -140,6 +140,6 @@ def welch_ttest(treat, ctrl, alpha=0.05, ha='two-sided'):
     if ha[0] == 'l':
         t_critical *= -1
     
-    ci_lwr, ci_upr = confint(treat.mean()-ctrl.mean(), t_critical, se)
+    ci_lwr, ci_upr = confint(mean_treat-mean_ctrl, t_critical, se)
 
     return t, p, dof, ci_lwr, ci_upr
