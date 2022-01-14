@@ -88,8 +88,8 @@ def ztest_2prop(x_treat, n_treat, x_ctrl, n_ctrl, alpha=0.05, ha='two-sided'):
 
     # DataFrame with all test outputs of interest
     out_df = pd.DataFrame(
-      {'': [p_ctrl, p_treat, lift, z, p, p_treat-p_ctrl, ci_lwr, ci_upr]},
-      index=['control', 'treatment', 'lift', 'z-score', 'p-value', 'diff',
+      {'': [p_ctrl, p_treat, p_treat-p_ctrl, lift, z, p, ci_lwr, ci_upr]},
+      index=['control', 'treatment', 'diff', 'lift', 'z-score', 'p-value',
              'diff ({0:.0f}% CI lower)'.format(100*(1-alpha)),
              'diff ({0:.0f}% CI upper)'.format(100*(1-alpha))])
 
@@ -165,8 +165,8 @@ def welch_ttest(treat, ctrl, alpha=0.05, ha='two-sided'):
 
     # DataFrame with all test outputs of interest
     out_df = pd.DataFrame(
-      {'': [mean_ctrl, mean_treat, lift, t, p, mean_treat-mean_ctrl, ci_lwr, ci_upr]},
-      index=['control', 'treatment', 'lift', 't-score', 'p-value', 'diff',
+      {'': [mean_ctrl, mean_treat, mean_treat-mean_ctrl, lift, t, p, dof, ci_lwr, ci_upr]},
+      index=['control', 'treatment', 'diff', 'lift', 't-score', 'p-value', 'DoF',
              'diff ({0:.0f}% CI lower)'.format(100*(1-alpha)),
              'diff ({0:.0f}% CI upper)'.format(100*(1-alpha))])
 
