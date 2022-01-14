@@ -6,7 +6,7 @@ def conf_int(x, stat, se):
 
 
 def ztest_2prop(x_treat, n_treat, x_ctrl, n_ctrl, alpha=0.05, ha='two-sided'):
-  """
+    """
     Conduct a two-proportion z-test.
     
     Parameters
