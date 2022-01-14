@@ -4,9 +4,16 @@ import numpy as np
 import pandas as pd
 
 
-def confint(x, stat, se):
-    ci_lwr = x - stat * se
-    ci_upr = x + stat * se
+def confint(x, stat, se, ha='two-sided'):
+    if ha[0] == 'l':
+        ci_lwr = 'infinite'
+    else:
+        ci_lwr = x - stat * se
+    
+    if ha[0] == 'r':
+        ci_upr = 'infinite'
+    else:
+        ci_upr = x + stat * se
 
     return ci_lwr, ci_upr
 
@@ -86,8 +93,8 @@ def ztest_2prop(x_treat, n_treat, x_ctrl, n_ctrl, alpha=0.05, ha='two-sided'):
 
     # DataFrame with all test outputs of interest
     out_df = pd.DataFrame(
-      {'': [p_ctrl, p_treat, p_treat-p_ctrl, lift, z, p, ci_lwr, ci_upr]},
-      index=['control', 'treatment', 'diff', 'lift', 'z-score', 'p-value',
+      {'': [p_ctrl, p_treat, z, p, lift, p_treat-p_ctrl, ci_lwr, ci_upr]},
+      index=['control', 'treatment', 'z-score', 'p-value', 'lift', 'diff',
              'diff ({0:.0f}% CI lower)'.format(100*(1-alpha)),
              'diff ({0:.0f}% CI upper)'.format(100*(1-alpha))])
 
@@ -163,8 +170,8 @@ def welch_ttest(treat, ctrl, alpha=0.05, ha='two-sided'):
 
     # DataFrame with all test outputs of interest
     out_df = pd.DataFrame(
-      {'': [mean_ctrl, mean_treat, mean_treat-mean_ctrl, lift, t, p, dof, ci_lwr, ci_upr]},
-      index=['control', 'treatment', 'diff', 'lift', 't-score', 'p-value', 'DoF',
+      {'': [mean_ctrl, mean_treat, z, p, DoF, lift, mean_treat-treat_ctrl, ci_lwr, ci_upr]},
+      index=['control', 'treatment', 'z-score', 'p-value', 'DoF', 'lift', 'diff',
              'diff ({0:.0f}% CI lower)'.format(100*(1-alpha)),
              'diff ({0:.0f}% CI upper)'.format(100*(1-alpha))])
 
