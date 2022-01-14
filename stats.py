@@ -140,5 +140,35 @@ def welch_ttest(treat, ctrl, alpha=0.05, ha='two-sided'):
         t_critical *= -1
     
     ci_lwr, ci_upr = confint(mean_treat-mean_ctrl, t_critical, se)
+    
+    # Calculate the pct lift
+    lift = mean_treat/mean_ctrl-1
+    lift_lwr = ci_lwr/mean_ctrl
+    lift_upr = ci_upr/mean_ctrl
+    
+    # Function to format decimals as percentages for print-out readability
+    # Optionally, prepend a sign (+/-) before a percentage (e.g., when representing lift estimates)
+    def format_pct_str(x, precision=None, sign=False):
+        pct = str(round(x*100, precision)) + '%'
+        return '+' + pct if x >= 0 else pct
 
-    return t, p, dof, ci_lwr, ci_upr
+    # Star indicator if the diff in proportions was statsig
+    sig = '*' if p <= alpha else ''
+
+    # Print a readout of the experiment conclusion
+    print(f'{format_pct_str(lift, precision=2)}',
+        'lift in the treatment',
+        f'({format_pct_str(1-alpha)} CI:',
+        f'{format_pct_str(lift_lwr, precision=2, sign=True)}',
+        f'to {format_pct_str(lift_upr, precision=2, sign=True)})',
+        sig)
+
+    # DataFrame with all test outputs of interest
+    out_df = pd.DataFrame(
+      {'': [mean_ctrl, mean_treat, lift, t, p, mean_treat-mean_ctrl, ci_lwr, ci_upr]},
+      index=['control', 'treatment', 'lift', 't-score', 'p-value', 'diff',
+             'diff ({0:.0f}% CI lower)'.format(100*(1-alpha)),
+             'diff ({0:.0f}% CI upper)'.format(100*(1-alpha))])
+
+    with pd.option_context('display.precision', 10):
+        return out_df
