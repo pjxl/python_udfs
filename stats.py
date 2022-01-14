@@ -94,7 +94,7 @@ def ztest_2prop(x_treat, n_treat, x_ctrl, n_ctrl, alpha=0.05, ha='two-sided'):
              'diff ({0:.0f}% CI upper)'.format(100*(1-alpha))])
 
     with pd.option_context('display.precision', 10):
-      return out_df
+        return out_df
 
 
 def welch_ttest(treat, ctrl):
