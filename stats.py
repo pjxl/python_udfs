@@ -116,7 +116,7 @@ def ztest_2prop(x_treat, n_treat, x_ctrl, n_ctrl, alpha=0.05, ha='two-sided'):
 
 
 # https://github.com/scipy/scipy/blob/47bb6febaa10658c72962b9615d5d5aa2513fa3a/scipy/stats/stats.py#L5661
-def _ttest_p(t, d0f, ha):
+def _ttest_p(t, dof, ha):
     if ha == 'less':
         p = stats.t.cdf(t, dof)
     elif ha == 'greater':
