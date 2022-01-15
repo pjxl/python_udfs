@@ -20,6 +20,18 @@ def confint(x, stat, se, ha='two-sided'):
     return ci_lwr, ci_upr
 
 
+# https://github.com/scipy/scipy/blob/47bb6febaa10658c72962b9615d5d5aa2513fa3a/scipy/stats/stats.py#L1330
+def _ztest_p(z, ha):
+    if ha == 'less':
+        p = stats.norm.cdf(z)
+    elif ha == 'greater':
+        p = stats.norm.sf(z)
+    elif ha == 'two-sided':
+        p = 2 * stats.norm.sf(abs(z), dof)
+        
+    return p
+
+
 def ztest_2prop(x_treat, n_treat, x_ctrl, n_ctrl, alpha=0.05, ha='two-sided'):
     """
     Conduct a two-proportion z-test.
@@ -36,7 +48,7 @@ def ztest_2prop(x_treat, n_treat, x_ctrl, n_ctrl, alpha=0.05, ha='two-sided'):
 
         alpha: (float; default=0.05) The desired significance level.
 
-        ha: (string; default='two-sided') The desired directionality of the test. A valid input is one of ('two-sided', 't', 'greater', 'g', 'less', 'l').
+        ha: (string; default='two-sided') The desired directionality of the test. A valid input is one of ('two-sided', 'greater', 'less').
     """
 
     # Assert valid values for ha
@@ -60,11 +72,10 @@ def ztest_2prop(x_treat, n_treat, x_ctrl, n_ctrl, alpha=0.05, ha='two-sided'):
     z = (p_treat-p_ctrl)/se
 
     # Calculate the p-value associated with z
-    p = 1-stats.norm.cdf(abs(z))
-    one_sided = ha[0] in {'g', 'l'}
-    p *= 2-one_sided
+    p = _ztest_p(z, ha)
 
     # Calculate the critical z-score
+    one_sided = ha[0] in {'greater', 'less'}
     z_critical = stats.norm.ppf(1 - alpha / (1 + (not one_sided)))
 
     # Find the lower and upper CIs boundaries
@@ -104,10 +115,22 @@ def ztest_2prop(x_treat, n_treat, x_ctrl, n_ctrl, alpha=0.05, ha='two-sided'):
         return out_df
 
 
+# https://github.com/scipy/scipy/blob/47bb6febaa10658c72962b9615d5d5aa2513fa3a/scipy/stats/stats.py#L5661
+def _ttest_p(t, d0f, ha):
+    if ha == 'less':
+        p = stats.t.cdf(t, dof)
+    elif ha == 'greater':
+        p = stats.t.sf(t, dof)
+    elif ha == 'two-sided':
+        p = 2 * stats.t.sf(abs(t), dof)
+        
+    return p
+
+
 def welch_ttest(treat, ctrl, alpha=0.05, ha='two-sided'):
     
     # Assert valid values for ha
-    valid_ha = {'two-sided', 't', 'greater', 'g', 'less', 'l'}
+    valid_ha = {'two-sided', 'greater', 'less'}
     ha = ha.lower()
 
     # Raise an error if a valid ha value is not provided
@@ -135,13 +158,10 @@ def welch_ttest(treat, ctrl, alpha=0.05, ha='two-sided'):
     dof = (var_treat/n_treat + var_ctrl/n_ctrl)**2 / ((var_treat/n_treat)**2 / (n_treat-1) + (var_ctrl/n_ctrl)**2 / (n_ctrl-1))
     
     # Calculate the p-value associated with t and dof
-    p = 1-stats.t.cdf(abs(t), dof)
-    one_sided = ha[0] in {'g', 'l'}
-    p *= 2-one_sided
-    
-    #t, p = stats.ttest_ind(treat, ctrl, equal_var=False, )
+    p = _ttest_p(t, dof, ha)
     
     # Calculate the critical t-score
+    one_sided = ha in {'greater', 'less'}
     t_critical = stats.t.ppf(1 - alpha / (1 + (not one_sided)), dof)
     
     # Find the lower and upper CIs boundaries
