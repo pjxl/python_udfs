@@ -27,7 +27,7 @@ def _ztest_p(z, ha):
     elif ha == 'greater':
         p = stats.norm.sf(z)
     elif ha == 'two-sided':
-        p = 2 * stats.norm.sf(abs(z), dof)
+        p = 2 * stats.norm.sf(abs(z))
         
     return p
 
