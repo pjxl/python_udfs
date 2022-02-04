@@ -82,3 +82,47 @@ def senstable(rows, cols,
         t = t.highlight_between(**highlight_between)
     
     return t.set_table_attributes("style='display:inline'").set_caption(title)
+
+
+
+def plotDiD(df, group, period, y, agg_func, y_label=None):
+    
+    """
+    Plot a difference-in-differences (DiD) slope comparison.
+    
+    Parameters
+    ----------
+        df: A pandas.DataFrame object containing the panel data of interest.
+        
+        group: A string representing the name of the column in `df` containing the variant labels.
+        
+        period: A string representing the name of the column in `df` containing the time period labels.
+        
+        y: A string representing the name of the column in `df` containing the dependent variable.
+        
+        agg_func: A string representing the pd.agg() function name (e.g. 'mean') to be performed on y when grouping by `group` and `period`.
+        
+        y_label: (Optional) A string to be passed to the y-axis name. If not specified, the y-axis name defaults to the value of `y`.
+    """
+    
+    import numpy as np
+    import pandas as pd
+    import matplotlib.pyplot as plt
+    
+    periods = np.array(['Pre', 'Post'])
+    variants = np.array(['Control', 'Treatment', 'Counterfactual'])
+
+    df_agg = df.groupby([group, period]).agg(y=(y, agg_func)).reset_index()
+
+    t0_ctrl, t1_ctrl, t0_treat, t1_treat = [df_agg[(df_agg[group]==i) & (df_agg[period]==j)].y.values[0] for i, j in [(0, 0), (0, 1), (1, 0), (1, 1)]]
+    
+    t1_counterfact = t1_ctrl + t0_treat - t0_ctrl
+
+    fig, ax = plt.subplots(figsize=(10,8))
+    ax.plot(periods, np.array([t0_ctrl, t1_ctrl]), color='steelblue', marker='o')
+    ax.plot(periods, np.array([t0_treat, t1_treat]), color='darkorange', marker='o')
+    ax.plot(periods, np.array([t0_treat, t1_counterfact]), color='darkorange', linestyle='dashed', marker='o')
+    ax.set_xlabel('Period')
+    ax.set_ylabel(y_label if y_label else y)
+    ax.legend(variants)
+    plt.show()
