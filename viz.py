@@ -29,7 +29,7 @@ def senstable(rows, cols,
         
         gradient_color: The primary color for the table's gradient color map (passed to pandas.io.formats.style.Styler.background_gradient).
         
-        highlight_between: A dict object with keywords arguments to be passed to pandas.io.formats.style.Styler.highlight_between.
+        highlight_between: A dict object with keywords arguments to be passed to pandas.io.formats.style.Styler.highlight_between (e.g. {'right': 1, 'props': 'font-weight:bold;color:#e83e8c'}).
         
         title: A string object to be passed to the title of the table.
     """
