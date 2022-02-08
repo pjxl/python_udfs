@@ -85,7 +85,7 @@ def senstable(rows, cols,
 
 
 
-def plotDiD(df, group, period, y, agg_func, y_label=None):
+def plotDiD(df, group, period, y, agg_func, y_label=None, title=None):
     
     """
     Plot a difference-in-differences (DiD) slope comparison.
@@ -103,6 +103,8 @@ def plotDiD(df, group, period, y, agg_func, y_label=None):
         agg_func: A string representing the pd.agg() function name (e.g. 'mean') to be performed on y when grouping by `group` and `period`.
         
         y_label: (Optional) A string to be passed to the y-axis name. If not specified, the y-axis name defaults to the value of `y`.
+        
+        title: (Optional) A string to be passed to the plot title.
     """
     
     import numpy as np
@@ -124,5 +126,6 @@ def plotDiD(df, group, period, y, agg_func, y_label=None):
     ax.plot(periods, np.array([t0_treat, t1_counterfact]), color='darkorange', linestyle='dashed', marker='o')
     ax.set_xlabel('Period')
     ax.set_ylabel(y_label if y_label else y)
+    ax.set_title(title)
     ax.legend(variants)
     plt.show()
