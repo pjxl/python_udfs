@@ -1,2 +1,2 @@
-from . import imports
-from . import test
+from .imports import *
+from .test import *
