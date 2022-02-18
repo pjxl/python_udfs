@@ -1,3 +1,10 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+
+
 def senstable(rows, cols, 
               dimnames=['x1', 'x2'], 
               func=lambda i, j: None,
@@ -33,10 +40,7 @@ def senstable(rows, cols,
         
         title: A string object to be passed to the title of the table.
     """
-    
-    import pandas as pd
-    import seaborn as sns
-    
+        
     # Convert row/col variables to 1D DataFrame objects
     rows_df, cols_df = (pd.DataFrame(v) for i, v in enumerate([rows, cols]))
     
@@ -106,11 +110,7 @@ def plotDiD(df, group, period, y, agg_func, y_label=None, title=None):
         
         title: (Optional) A string to be passed to the plot title.
     """
-    
-    import numpy as np
-    import pandas as pd
-    import matplotlib.pyplot as plt
-    
+        
     periods = np.array(['Pre', 'Post'])
     variants = np.array(['Control', 'Treatment', 'Counterfactual'])
 
