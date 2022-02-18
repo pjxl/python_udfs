@@ -1,4 +1,4 @@
-import utils
+from imports import *
 
 def hello_world():
     print('Hello, world!')
