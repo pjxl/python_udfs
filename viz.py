@@ -2,8 +2,111 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+from collections.abc import Iterable
 
 
+class EtsyColors():
+    """
+    Instantiate an object with a `library` property containing Etsy's brand colors.
+    See: https://drive.google.com/file/d/185hhTOMsBWTacLE8fZo44czjJloB1qCb/view
+    """
+
+    # Define a dict with all brand colors
+    library = {
+        'orange': {'dark': '#CF4018', 'medium': '#F1641E', 'light': '#FAA077'},
+        'denim': {'dark': '#232347', 'medium': '#2F466C', 'light': '#4D6BC6'},
+        'grey': {'dark': '#222222', 'medium': '#595959', 'light': '#757575'},
+        'lavender': {'dark': '#3E1C53', 'medium': '#654B77', 'light': '#9560B8'},
+        'beeswax': {'dark': '#A66800', 'medium': '#FAA129', 'light': '#FDD95C'},
+        'slime': {'dark': '#1C4A21', 'medium': '#258635', 'light': '#9EC063'},
+        'brick': {'dark': '#540D17', 'medium': '#A61A2E', 'light': '#FD9184'},               
+        'turquoise': {'dark': '#1A3B38', 'medium': '#2F766D', 'light': '#7ED4BD'},
+        'bubblegum': {'dark': '#592642', 'medium': '#B54C82', 'light': '#F592B8'}
+    }
+
+
+    def __init__(self):
+        pass
+
+
+    # Function that fetches hex values from `self.library`
+    def __hex_fetcher(self, hue, tint):
+    
+        # `hue` `tint` args can be iterables, strings, or None
+        # This function ensures that arg values are handled as expected, regardless of type
+        def input_cleaner(x, all_names):            
+            if (x is None) or (isinstance(x, str) and x.lower() == 'all'):
+                out = all_names
+            elif isinstance(x, str) and x.lower() == 'core':
+                out = ['orange', 'denim', 'grey']
+            elif isinstance(x, str) and x.lower() == 'extended':
+                out = [i for i in self.library.keys() if i not in ['orange', 'denim', 'grey']]
+            elif isinstance(x, str):
+                out = [x]
+            elif isinstance(x, Iterable):
+                out = x
+            else:
+                out = all_names
+
+            return out
+
+        
+        hue, tint = input_cleaner(hue, self.library.keys()), input_cleaner(tint, ['dark', 'medium', 'light'])
+
+        stack = []
+        for h in hue:
+            for t in tint:
+                try:
+                    stack.append(self.library.get(h).get(t))
+                except:
+                    pass
+
+        return stack if len(stack) > 0 else None
+
+
+    def __palette_constructor(self, hue, tint, n_colors):
+        hexes = self.__hex_fetcher(hue=hue, tint=tint)
+        return sns.color_palette(hexes, n_colors=n_colors)
+
+
+    def make_palette(self, hue=None, tint=None, n_colors=None, as_hex=False, plot=False):
+        """
+        Generate a custom color palette out of the options in `self.library`.
+        """
+        
+        valid_hue = [i in self.library.keys() or i in ('all', 'core', 'extended') for i in hue]
+        hue = hue if any(valid_hue) else None
+
+        if as_hex:
+            out = self.__hex_fetcher(hue, tint)[:n_colors]
+        elif hue:
+            out = self.__palette_constructor(hue, tint, n_colors)
+        else:
+            out = None
+        
+        if plot and out:
+            sns.palplot(out)
+        else:
+            pass
+        
+        return out
+
+
+    def plot_pairings(self, kind='c'):
+        if ('compliment' in kind.lower()) or (kind.lower() == 'c'):
+            pairs = {
+                'denim': 'orange',
+                'bubblegum': 'slime',
+                'beeswax': 'lavender',
+                'brick': 'turquoise'
+            }
+            for key in pairs:
+                for tint in ['dark', 'medium', 'light']:
+                    sns.palplot(self.__palette_constructor(hue=[key, pairs[key]], tint=tint, n_colors=2))
+        
+        return None
+
+      
 
 def senstable(rows, cols, 
               dimnames=['x1', 'x2'], 
