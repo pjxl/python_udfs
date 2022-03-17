@@ -74,8 +74,9 @@ class EtsyColors():
         Generate a custom color palette out of the options in `self.library`.
         """
         
-        valid_hue = [i in self.library.keys() or i in ('all', 'core', 'extended') for i in hue]
-        hue = hue if any(valid_hue) else None
+        if hue:
+            valid_hue = [i in self.library.keys() or i in ('all', 'core', 'extended') for i.lower() in hue]
+            hue = hue if any(valid_hue) else None
 
         if as_hex:
             out = self.__hex_fetcher(hue, tint)[:n_colors]
