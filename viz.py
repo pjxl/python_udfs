@@ -30,7 +30,8 @@ class EtsyColors():
         # If the input object isn't already a non-string iterable, make it one
         def to_iter(x):
             return [x] if not isinstance(x, Iterable) or isinstance(x, str) else x
-
+        
+        # Cast all str items in the input object to lowercase
         def parse_str(x):
             return [i.lower() if isinstance(i, str) else i for i in x]
 
@@ -76,7 +77,7 @@ class EtsyColors():
         return hexes
 
 
-    def make_palette(self, hue=None, tint=None, n_colors=None, plot=False):
+    def make_palette(self, hue=None, tint=None, n_colors=None):
         """
         Generate a custom color palette out of the options in `self.library`.
         """
