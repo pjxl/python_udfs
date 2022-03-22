@@ -1,5 +1,5 @@
 from .test import *
-from .stats import *
+from .analytics import *
 from .viz import *
 from .helper import *
 from .bigquery import *
