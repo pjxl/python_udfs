@@ -132,7 +132,7 @@ class _Matcher(PSM):
         self._orig_balance = orig_balance
 
 
-    def love_plot(self):
+    def love_plot(self, xvline_at=0.1):
         fig, ax = plt.subplots(figsize=(10,6))
 
         ax.grid(axis='y', c='gainsboro', linestyle='--')
@@ -141,8 +141,9 @@ class _Matcher(PSM):
             ax.scatter(b['Abs. Std. Mean Diff'], b['Covariate'], s=60)
 
         ax.legend(['Pre-matching', 'Post-matching'], facecolor='whitesmoke')
-
-        ax.axvline(x=0.1, c='black', alpha=0.5, linestyle=':')
+        
+        if x_ref_line:
+            ax.axvline(x=xvline_at, c='black', alpha=0.5, linestyle=':')            
 
         plt.draw()
         labels = ax.get_yticklabels()
