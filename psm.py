@@ -142,7 +142,7 @@ class _Matcher(PSM):
 
         ax.legend(['Pre-matching', 'Post-matching'], facecolor='whitesmoke')
         
-        if x_ref_line:
+        if xvline_at:
             ax.axvline(x=xvline_at, c='black', alpha=0.5, linestyle=':')            
 
         plt.draw()
