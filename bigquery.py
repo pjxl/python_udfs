@@ -1,5 +1,8 @@
-from google.cloud import bigquery
-from google.colab import auth
+try:
+    from google.cloud import bigquery
+
+try:
+    from google.colab import auth
 
 
 def bq_auth():
