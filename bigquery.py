@@ -1,8 +1,14 @@
-try:
-    from google.cloud import bigquery
+import sys
 
 try:
+    from google.cloud import bigquery
     from google.colab import auth
+except ModuleNotFoundError as moduleErr:
+    print("[Error]: Failed to import (Module Not Found) {}.".format(moduleErr.args[0]))
+    sys.exit(1)
+except ImportError as impErr:
+    print("[Error]: Failed to import (Import Error) {}.".format(impErr.args[0]))
+    sys.exit(1)
 
 
 def bq_auth():
