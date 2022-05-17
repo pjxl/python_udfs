@@ -23,6 +23,16 @@ class BigQueryClient():
             bq_auth()
         except ModuleNotFoundError as error:
             print('Warning:', error)
-          
+        
+        
     def query(self, sql):
         return self.client.query(sql).to_dataframe()
+    
+    
+    def set_params(params: dict, verbose=False):
+        self.params.update(params)
+        
+        if verbose:
+            print(self.params)
+        else:
+            pass
