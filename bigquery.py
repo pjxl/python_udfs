@@ -29,7 +29,7 @@ class BigQueryClient():
         return self.client.query(sql).to_dataframe()
     
     
-    def set_params(params: dict, verbose=False):
+    def set_params(self, params: dict, verbose=False):
         self.params.update(params)
         
         if verbose:
