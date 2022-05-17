@@ -11,8 +11,9 @@ def bq_auth():
 
 
 class BigQueryClient():
-    def __init__(self, project='etsy-bigquery-adhoc-prod', params=dict():
+    def __init__(self, project='etsy-bigquery-adhoc-prod', params=dict()):
         self.params = params
+        
         try:
             self.client = bigquery.Client(project=project)
         
