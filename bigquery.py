@@ -16,9 +16,13 @@ class BigQueryClient():
         
         try:
             self.client = bigquery.Client(project=project)
+        except ModuleNotFoundError as error:
+            print('Warning:', error)
         
         try:
-            bq_auth()        
+            bq_auth()
+        except ModuleNotFoundError as error:
+            print('Warning:', error)
           
     def query(self, sql):
         return self.client.query(sql).to_dataframe()
