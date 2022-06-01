@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
-from collections.abc import Iterable
+
 
 def senstable(rows, cols, 
               dimnames=['x1', 'x2'], 
