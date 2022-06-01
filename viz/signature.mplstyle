@@ -1,4 +1,4 @@
 ### FIGURE
-figure.figsize : 10.0, 7.5
+figure.figsize : 20, 15
 figure.facecolor :   white
 figure.edgecolor :   white
