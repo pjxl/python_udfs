@@ -1,3 +1,6 @@
+# Various UDFs defining "quick-plots"
+# These will typically be very specialized in nature
+
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
