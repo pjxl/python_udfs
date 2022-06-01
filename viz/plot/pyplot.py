@@ -1,5 +1,6 @@
 # Custom extensions to base matplotlib.pyplot functionality
 
+import matplotlib.projections as proj
 from matplotlib.axes import Axes
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mtick
@@ -36,7 +37,7 @@ class _AugmentedAxis(Axes):
         return self._format_tick_labels(axis='y', format=format, **kwargs)
 
 
-matplotlib.projections.register_projection(_AugmentedAxis)
+proj.register_projection(_AugmentedAxis)
 
 
 def subplots(*args, **kwargs):
