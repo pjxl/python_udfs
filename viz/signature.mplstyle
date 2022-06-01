@@ -8,4 +8,9 @@ axes.titlelocation : left
 axes.titlepad : 12
 axes.labelsize : 12
 axes.labelpad : 12
-axes.titlelocation : center
+
+### GRID
+grid.color : gainsboro
+
+### LINES
+lines.linewidth : 1.5
