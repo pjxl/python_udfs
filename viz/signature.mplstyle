@@ -1,4 +1,9 @@
 ### FIGURE
-figure.figsize : 20, 15
+figure.figsize : 10.0, 7.5
 figure.facecolor :   white
 figure.edgecolor :   white
+
+### AXES
+axes.titlesize : 14
+axes.labelsize : 12
+axes.labelpad : 12
