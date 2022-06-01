@@ -5,7 +5,7 @@ figure.edgecolor :   white
 ### AXES
 axes.titlesize : 14
 axes.titlelocation : left
-axes.titleapad : 12
+axes.titlepad : 12
 axes.labelsize : 12
 axes.labelpad : 12
 axes.titlelocation : center
