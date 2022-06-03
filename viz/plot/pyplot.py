@@ -40,3 +40,17 @@ proj.register_projection(_AugmentedAxis)
 
 def subplots(*args, **kwargs):
     return plt.subplots(*args, **kwargs, subplot_kw=dict(projection='aug'))
+
+
+# Subclass str, extending it with methods that facilitate quick wrapping with TeX markup
+# For more info, see: https://matplotlib.org/3.5.0/tutorials/text/mathtext.html
+class TeXstr(str):
+    def __init__(self, x):
+        pass
+
+    def bold(self):
+        # Default behavior for a TeX wrapper is to strip whitespaces
+        # To format the text while preserving spacing, we need to individually wrap each word in the input string
+        words = self.split()
+        words = [r'$\bf{' + w + '}$' for w in words]
+        return ' '.join(words)
