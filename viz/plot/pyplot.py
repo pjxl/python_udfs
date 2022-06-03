@@ -12,17 +12,28 @@ import matplotlib.dates as mdate
 class _AugmentedAxis(Axes):
     name = 'aug'
 
-    def format_tick_labels_numeric(self, axis, decimals, as_percent=False, prefix='', suffix=''):
+    def _get_spines(self, axis):
         axmap = {'x': [self.xaxis],
                  'y': [self.yaxis],
                  'both': [self.xaxis, self.yaxis]}
         
+        return axmap.get(axis)
+        
+    def format_tick_labels_numeric(self, axis, decimals, as_percent=False, prefix='', suffix=''):        
         cast_type = '%' if as_percent else 'f'
         fmt = f'{prefix}{{x:,.{decimals}{cast_type}}}{suffix}'
-
-        for spine in axmap.get(axis):
-            spine.set_major_formatter(mtick.StrMethodFormatter(fmt))
         
+        for spine in self._get_spines(axis):
+            spine.set_major_formatter(mtick.StrMethodFormatter(fmt))
+
+    def format_tick_labels_date(self, axis, strftime):
+        for spine in self._get_spines(axis):
+            spine.set_major_formatter(mdate.DateFormatter(strftime))
+
+    def set_tick_intervals(self, axis, interval):
+        for spine in self._get_spines(axis):
+            spine.set_major_locator(mtick.MultipleLocator(base=interval))
+
 
 proj.register_projection(_AugmentedAxis)
 
