@@ -12,30 +12,17 @@ import matplotlib.dates as mdate
 class _AugmentedAxis(Axes):
     name = 'aug'
 
+    def format_tick_labels_numeric(self, axis, decimals, as_percent=False, prefix='', suffix=''):
+        axmap = {'x': [self.xaxis],
+                 'y': [self.yaxis],
+                 'both': [self.xaxis, self.yaxis]}
+        
+        cast_type = '%' if as_percent else 'f'
+        fmt = f'{prefix}{{x:,.{decimals}{cast_type}}}{suffix}'
 
-    def _get_spine(self, spine):
-        return self.__getattribute__(spine + 'axis')
-
-
-    def _format_tick_labels(self, axis, format, **kwargs):
-        spine = self._get_spine(axis)
-
-        def _as_percent(spine, **kwargs):
-            return spine.set_major_formatter(mtick.PercentFormatter(**kwargs))
-
-        if format == 'percent':
-            return _as_percent(spine, **kwargs)
-        else:
-            pass
-
-
-    def format_xtick_labels(self, format=None, **kwargs):
-        return self._format_tick_labels(axis='x', format=format, **kwargs)
-
-    
-    def format_ytick_labels(self, format=None, **kwargs):
-        return self._format_tick_labels(axis='y', format=format, **kwargs)
-
+        for spine in axmap.get(axis):
+            spine.set_major_formatter(mtick.StrMethodFormatter(fmt))
+        
 
 proj.register_projection(_AugmentedAxis)
 
