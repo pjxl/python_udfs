@@ -47,10 +47,16 @@ def subplots(*args, **kwargs):
 class TeXstr(str):
     def __init__(self, x):
         pass
-
-    def bold(self):
+    
+    def _transform(self, tag):
         # Default behavior for a TeX wrapper is to strip whitespaces
         # To format the text while preserving spacing, we need to individually wrap each word in the input string
         words = self.split()
-        words = [r'$\bf{' + w + '}$' for w in words]
+        words = ['$' + tag + '{' + w + '}$' for w in words]
         return ' '.join(words)
+
+    def bold(self):
+        return self._transform(tag=r'\bf')
+
+    def italics(self):
+        return self._transform(tag=r'\it')
