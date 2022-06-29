@@ -7,16 +7,15 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 
-def senstable(rows, cols, 
+def senstable3(rows, cols, 
               dimnames=['x1', 'x2'], 
               func=lambda i, j: None,
               row_val_format=None,
               col_val_format=None,
               cell_val_format=None,
-              gradient_color='royalblue',
+              gradient_color='goldenrod',
               highlight_between=None,
-              title=None,
-              caption=None
+              title=None
              ):
   
     """
@@ -62,23 +61,80 @@ def senstable(rows, cols,
     if col_val_format:
         t.columns = [col_val_format(i) for i in t.columns]
     
-    # Name row/col dimensions
-    t.index.name = dimnames[0]
-    t.columns.name = dimnames[1]
-    
+    # Apply row/col headers
+    ylabel, xlabel = dimnames    
+    t.index = pd.MultiIndex.from_product([[ylabel], t.index])
+    t.columns = pd.MultiIndex.from_product([[xlabel], t.columns])
+
+    # Format cell text
     t = t.style.format(cell_val_format)
-    
-    # Designate and apply standard table styling
-    index_names = {
-        'selector': '.index_name',
-        'props': 'font-style: italic; color: white; font-weight:bold; background-color: #000066;'
+
+    # Apply table styling    
+    head_css = {
+        'selector': 'th',
+        'props': [('background-color', 'white')]
     }
-    headers = {
-        'selector': 'th:not(.index_name)',
-        'props': 'background-color: #000066; color: white;'
+    col_head_val_css = {
+        'selector': 'th.col_heading.level1:not(:nth-child(2))',
+        'props': [('text-align', 'center'),
+                  ('font-style', 'italic'),
+                  ('font-family', 'Arial'),
+                  ('color', 'black'),
+                  ('background-color', 'white'),
+                  ('border-right', '1px dotted black'),
+                  ('border-left', '1px dotted black'),
+                  ('border-bottom', '2px solid black')]
     }
-    t = t.set_table_styles([index_names, headers])
-    
+    row_head_val_css = {
+        'selector': 'th.row_heading.level1',
+        'props': [('text-align', 'center'),
+                  ('font-style', 'italic'),
+                  ('font-family', 'Arial'),
+                  ('color', 'black'),
+                  ('background-color', 'white'),
+                  ('border-right', '2px solid black'),
+                  ('border-left', '1px dotted black'),
+                  ('border-top', '1px dotted black')]
+    }
+    row_name_css = {
+        'selector': 'th.row_heading.level0',
+        'props': [('text-align', 'center'),
+                  ('font-style', 'italic'),
+                  ('font-family', 'Arial'),
+                  ('color', 'black'),
+                  ('background-color', 'white'),
+                  ('writing-mode', 'vertical-lr'),
+                  ('transform', 'rotate(180deg)'),
+                  ('white-space', 'pre'),
+                  ('line-height', '200%'),
+                  ('border-top', '1px solid white'),
+                  ('border-right', '1px solid white')]
+    }
+    col_name_css = {
+        'selector': 'th.col_heading.level0',
+        'props': [('text-align', 'center'),
+                  ('font-style', 'italic'),
+                  ('font-family', 'Arial'),
+                  ('color', 'black'),
+                  ('background-color', 'white')]
+    }
+    cell_css = {
+        'selector': 'td',
+        'props': [('border-left', '1px dotted black'),
+                  ('border-top', '1px dotted black')]
+    }
+    caption_css = {
+        'selector': 'caption',
+        'props': [('background-color', 'white'),
+                  ('text-align', 'center'),
+                  ('font-size', '16px'),
+                  ('color', 'black'),
+                  ('padding-left', '10px'),
+                  ('padding-bottom', '10px')]
+    }
+
+    t = t.set_table_styles([head_css, col_head_val_css, row_head_val_css, row_name_css, col_name_css, cell_css, caption_css])
+
     # Apply background gradient
     cmap = sns.light_palette(gradient_color, as_cmap=True)
     t = t.background_gradient(cmap, axis=None)
