@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 
-def senstable3(rows, cols, 
+def senstable(rows, cols, 
               dimnames=['x1', 'x2'], 
               func=lambda i, j: None,
               row_val_format=None,
