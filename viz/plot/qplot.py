@@ -69,7 +69,8 @@ def senstable(rows, cols,
     # Format cell text
     t = t.style.format(cell_val_format)
 
-    # Apply table styling    
+    # Apply table styling
+    # Resources on functionality here: https://pandas.pydata.org/docs/user_guide/style.html
     head_css = {
         'selector': 'th',
         'props': [('background-color', 'white')]
