@@ -16,7 +16,7 @@ def senstable(rows, cols,
               gradient_color='goldenrod',
               callout_area=None,
               highlight_between=None,
-              title=None
+              title_props={'text': None, 'loc': 'center', 'fontsize': 16}
              ):
   
     """
@@ -59,8 +59,8 @@ def senstable(rows, cols,
         A dict with keywords arguments to be passed to pandas.io.formats.style.Styler.highlight_between().
         For example: `{'right': 1, 'props': 'font-weight:bold;color:#e83e8c'}`.
     
-    title : str, default None
-        A string to be passed to the title of the table.
+    title_props : dict, default `{'text': None, 'loc': 'center', 'fontsize': 16}`
+        A dict containing properties used to create and customize the table's caption.
     """
         
     # Convert row/col variables to 1D DataFrame objects
@@ -139,8 +139,8 @@ def senstable(rows, cols,
     caption_css = {
         'selector': 'caption',
         'props': [('background-color', 'white'),
-                  ('text-align', 'center'),
-                  ('font-size', '16px'),
+                  ('text-align', f"{title_props.get('loc', 'center')}"),
+                  ('font-size', f"{str(title_props.get('fontsize', 16))+'px'}"),
                   ('color', 'black'),
                   ('padding-left', '10px'),
                   ('padding-bottom', '10px')]
@@ -188,7 +188,7 @@ def senstable(rows, cols,
     if highlight_between:
         style = style.highlight_between(**highlight_between)
     
-    return style.set_table_attributes("style='display:inline'").set_caption(title)
+    return style.set_table_attributes("style='display:inline'").set_caption(title_props.get('text', None))
 
 
 
