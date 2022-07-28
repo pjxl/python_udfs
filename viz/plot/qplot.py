@@ -14,6 +14,7 @@ def senstable(rows, cols,
               col_val_format=None,
               cell_val_format=None,
               gradient_color='goldenrod',
+              callout_area=None,
               highlight_between=None,
               title=None
              ):
@@ -23,23 +24,43 @@ def senstable(rows, cols,
     
     Parameters
     ----------
-        rows: A numeric sequence object representing the Y-axis variable.
+    rows : array-like of numerics
+        A numeric sequence representing the Y-axis variable.
         
-        cols: A numeric sequence object representing the X-axis variable.
-        
-        func: A function object that returns the cell values for each (i, j) combination of (rows, cols).
-        
-        row_val_format: A function object that formats the row values (e.g. lambda rows: '{:.1f}%'.format(rows*100)).
-        
-        col_val_format: A function object that formats the column values (e.g. lambda cols: '{:.1f}%'.format(cols*100)).
-        
-        cell_val_format: A function object that formats the cell values (e.g. lambda vals: '{:.1f}%'.format(vals*100)).
-        
-        gradient_color: The primary color for the table's gradient color map (passed to pandas.io.formats.style.Styler.background_gradient).
-        
-        highlight_between: A dict object with keywords arguments to be passed to pandas.io.formats.style.Styler.highlight_between (e.g. {'right': 1, 'props': 'font-weight:bold;color:#e83e8c'}).
-        
-        title: A string object to be passed to the title of the table.
+    cols : array-like of numerics
+        A numeric sequence representing the X-axis variable.
+    
+    func : function
+        A function that returns the cell values for each (i, j) combination of (rows, cols).
+        For example: `lambda row, col: row * col`.
+    
+    row_val_format : function, default None
+        A function that formats the row values. 
+        For example: `lambda rows: '{:.1f}%'.format(rows*100)`.
+    
+    col_val_format : function, default None
+        A function that formats the column values.
+        For example: `lambda cols: '{:.1f}%'.format(cols*100)`.
+    
+    cell_val_format : function, default None
+        A function that formats the cell values.
+        For example: `lambda vals: '{:.1f}%'.format(vals*100)`.
+    
+    gradient_color : str, default "goldenrod"
+        The primary color for the table's gradient color map (passed to pandas.io.formats.style.Styler.background_gradient).
+
+    callout_area : dict, default None
+        Callout a group of cell(s) with a prominent border.
+        For example, this can be used to emphasize a 2D range of expected values.
+        dict must contain all of the following keys: `row_start`, `row_stop`, `col_start`, and `col_stop`.
+        Each `%_start` / `%_stop` key must have an int value, corresponding to a starting/stopping (inclusive) positional index for a given "corner" of the target region.
+    
+    highlight_between : dict, default None
+        A dict with keywords arguments to be passed to pandas.io.formats.style.Styler.highlight_between().
+        For example: `{'right': 1, 'props': 'font-weight:bold;color:#e83e8c'}`.
+    
+    title : str, default None
+        A string to be passed to the title of the table.
     """
         
     # Convert row/col variables to 1D DataFrame objects
@@ -52,22 +73,22 @@ def senstable(rows, cols,
     xmat['y'] = [func(xmat.iloc[i, 0], xmat.iloc[i, 1]) for i in xmat.index]
     
     # Pivot to wide format
-    t = xmat.pivot(xmat.columns[0], xmat.columns[1], 'y')
+    df = xmat.pivot(xmat.columns[0], xmat.columns[1], 'y')
     
     # Apply any row/col value formatting
     if row_val_format:
-        t.index = [row_val_format(i) for i in t.index]
+        df.index = [row_val_format(i) for i in df.index]
         
     if col_val_format:
-        t.columns = [col_val_format(i) for i in t.columns]
+        df.columns = [col_val_format(i) for i in df.columns]
     
     # Apply row/col headers
     ylabel, xlabel = dimnames    
-    t.index = pd.MultiIndex.from_product([[ylabel], t.index])
-    t.columns = pd.MultiIndex.from_product([[xlabel], t.columns])
+    df.index = pd.MultiIndex.from_product([[ylabel], df.index])
+    df.columns = pd.MultiIndex.from_product([[xlabel], df.columns])
 
     # Format cell text
-    t = t.style.format(cell_val_format)
+    style = df.style.format(cell_val_format)
 
     # Apply table styling
     # Resources on functionality here: https://pandas.pydata.org/docs/user_guide/style.html
@@ -76,14 +97,12 @@ def senstable(rows, cols,
         'props': [('background-color', 'white')]
     }
     col_head_val_css = {
-        'selector': 'th.col_heading.level1:not(:nth-child(2))',
+        'selector': 'th.col_heading.level1',
         'props': [('text-align', 'center'),
                   ('font-style', 'italic'),
                   ('font-family', 'Arial'),
                   ('color', 'black'),
-                  ('background-color', 'white'),
-                  ('border-right', '1px dotted black'),
-                  ('border-left', '1px dotted black'),
+                  ('background-color', 'whitesmoke'),
                   ('border-bottom', '2px solid black')]
     }
     row_head_val_css = {
@@ -92,10 +111,8 @@ def senstable(rows, cols,
                   ('font-style', 'italic'),
                   ('font-family', 'Arial'),
                   ('color', 'black'),
-                  ('background-color', 'white'),
-                  ('border-right', '2px solid black'),
-                  ('border-left', '1px dotted black'),
-                  ('border-top', '1px dotted black')]
+                  ('background-color', 'whitesmoke'),
+                  ('border-right', '2px solid black')]
     }
     row_name_css = {
         'selector': 'th.row_heading.level0',
@@ -119,11 +136,6 @@ def senstable(rows, cols,
                   ('color', 'black'),
                   ('background-color', 'white')]
     }
-    cell_css = {
-        'selector': 'td',
-        'props': [('border-left', '1px dotted black'),
-                  ('border-top', '1px dotted black')]
-    }
     caption_css = {
         'selector': 'caption',
         'props': [('background-color', 'white'),
@@ -134,17 +146,49 @@ def senstable(rows, cols,
                   ('padding-bottom', '10px')]
     }
 
-    t = t.set_table_styles([head_css, col_head_val_css, row_head_val_css, row_name_css, col_name_css, cell_css, caption_css])
+    style = style.set_table_styles([head_css, col_head_val_css, row_head_val_css, row_name_css, col_name_css, caption_css],
+                                   overwrite=False)
 
     # Apply background gradient
     cmap = sns.light_palette(gradient_color, as_cmap=True)
-    t = t.background_gradient(cmap, axis=None)
+    style = style.background_gradient(cmap, axis=None)
+
+    # Emphasize any callout area by enclosing those cell(s) in a prominent border
+    if callout_area:
+    
+        # Extract boundary markers
+        # Each should be a positional int
+        row_start, row_stop = callout_area.get('row_start'), callout_area.get('row_stop')
+        col_start, col_stop = callout_area.get('col_start'), callout_area.get('col_stop')
+
+        # Ensure we have all four markers
+        if any([i is None for i in (row_start, row_stop, col_start, col_stop)]):
+            raise KeyError('Argument must be a dict with keys `row_start`, `row_stop`, `col_start`, and `col_stop`')
+
+        # .set_properties()'s `subset` param looks up slices using .loc, not .iloc
+        # So swap each positional int for its corresponding index/column name
+        row_start, row_stop = style.data.index[row_start], style.data.index[row_stop]
+        col_start, col_stop = style.data.columns[col_start], style.data.columns[col_stop]
+        
+        # Initialize slicer
+        idx = pd.IndexSlice
+
+        # Carve out four directional slices
+        # The name of each slice indicates the type of border to apply
+        left = idx[row_start:row_stop, col_start]
+        right = idx[row_start:row_stop, col_stop]
+        top = idx[row_start, col_start:col_stop]
+        bottom = idx[row_stop, col_start:col_stop]
+
+        # Apply callout border to each directional slice
+        for i in 'left', 'right', 'top', 'bottom':
+            style.set_properties(**{'border-' + i: '4px solid #e83e8c'}, subset=eval(i))
     
     # Apply any conditional highlighting
     if highlight_between:
-        t = t.highlight_between(**highlight_between)
+        style = style.highlight_between(**highlight_between)
     
-    return t.set_table_attributes("style='display:inline'").set_caption(title)
+    return style.set_table_attributes("style='display:inline'").set_caption(title)
 
 
 
