@@ -33,6 +33,10 @@ class _AugmentedAxis(Axes):
     def set_tick_intervals(self, axis, interval):
         for spine in self._get_spines(axis):
             spine.set_major_locator(mtick.MultipleLocator(base=interval))
+    
+    def hide_tick_labels(self, axis):
+        for spine in self._get_spines(axis):
+            spine.set_ticklabels([])
 
 
 proj.register_projection(_AugmentedAxis)
