@@ -66,7 +66,7 @@ def ztest_2prop(x_treat, n_treat, x_ctrl, n_ctrl, alpha=0.05, ha='two-sided'):
 
     # Compute the standard error of the sampling distribution of the difference between p_treat and p_ctrl
     se = p_pooled*(1-p_pooled)*(1/n_treat+1/n_ctrl)
-    se = sqrt(se)
+    se = math.sqrt(se)
 
     # Calculate the z test statistic
     z = (p_treat-p_ctrl)/se
@@ -150,7 +150,7 @@ def welch_ttest(treat, ctrl, alpha=0.05, ha='two-sided'):
     
     # Calculate the pooled standard error
     se = var_treat/n_treat + var_ctrl/n_ctrl
-    se = sqrt(se)
+    se = math.sqrt(se)
     
     t = (mean_treat-mean_ctrl) / se
     
@@ -213,4 +213,92 @@ def f_score(precision, recall, beta=1):
 
         beta (int): The beta value to be used. Defaults to 1, in which case the return value is equivalent to the F1 score.
     """
-    return (1+beta**2) * (precision*recall) / (beta**2*precision+recall)    
+    return (1+beta**2) * (precision*recall) / (beta**2*precision+recall)
+
+
+def pop_prop_sample_size(d, p=0.5, N=None, cl=0.95):
+    """
+    Calculates the minimum sample size needed to estimate the proportion of observations within 
+    a population that have a given characteristic, while meeting a given constraint on precision.
+
+    When `N=None`, equivalent to `statsmodels.stats.proportion.samplesize_confint_proportion()`:
+    https://www.statsmodels.org/dev/generated/statsmodels.stats.proportion.samplesize_confint_proportion.html
+
+    For more information, see: https://online.stat.psu.edu/stat506/lesson/2/2.3
+
+    Parameters:
+        d : float in (0, 1)
+            The required margin of error, or the half-length of the desired confidence interval.
+        p : float in (0, 1), default 0.5
+            Prior assumption around the proportion of the characteristic. Defaults to 0.5, which returns
+            the most conservatively (large) sample size.
+        N : int, default None
+            The size of the population. When `None`, assume an infinite population, and ignore the finite
+            population correction (fpc).
+        cl : float in (0, 1), default 0.5
+            The desired confidence level, defaulting to 0.95 or 95%.
+
+    Returns:
+        n : int
+            The sample size needed to observe a population proportion as large as `p`, at confidence
+            level `cl`, with a margine of error `d`. Round decimal values up to the nearest integer
+            using `math.ceil()`.
+    """
+
+    # Calculate the alpha value
+    alpha = 1-cl
+
+    # Calculate the z-score
+    z = stats.norm.ppf(1-alpha/2)
+
+    # If N is provided, assume a finite population and use the finite population correction
+    if N:
+        num = N*p*(1-p)
+        denom = (N-1)*(d**2)/(z**2) + p*(1-p)
+    # Otherwise, assume an infinite population
+    else:
+        num = z**2*p*(1-p)
+        denom = d**2
+
+    # Return sample size
+    # Handle fractional sizes by returning the ceiling
+    return math.ceil(num/denom)
+
+
+def pop_prop_confint(p, n, cl=0.95):
+    """
+    Calculates the confidence interval for an estimate of a population proportion, using
+    the normal approximation.
+
+    Equivalent to `statsmodels.stats.proportion.proportion_confint()` using `method='normal'`.
+
+    For more information, see: https://online.stat.psu.edu/stat506/lesson/2/2.2.
+
+    Parameters
+    ----------
+        p : float in (0, 1)
+            The observed proportion of observations in a sample having a given characteristic.
+        n : int
+            The number of observations in the sample.
+        cl : float in (0, 1), default 0.5
+            The desired confidence level, defaulting to 0.95 or 95%.
+
+    Returns
+    -------
+        ci_low, ci_upper : tuple
+            The lower and upper bounds of the confidence interval around `p`.
+    """
+
+    # Calculate the alpha value
+    alpha = 1-cl
+
+    # Calculate the z-score
+    z = stats.norm.ppf(1-alpha/2)
+
+    # Calculate the variance in p
+    var_p = p*(1-p)/n
+
+    # Calculate the margin of error
+    d = z*math.sqrt(var_p)
+
+    return p - d, p + d
