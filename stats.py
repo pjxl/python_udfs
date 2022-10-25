@@ -1,5 +1,5 @@
 from math import sqrt
-import scipy.stats as stats
+import scipy.stats as st
 import numpy as np
 import pandas as pd
 
@@ -23,11 +23,11 @@ def confint(x, stat, se, ha='two-sided'):
 # https://github.com/scipy/scipy/blob/47bb6febaa10658c72962b9615d5d5aa2513fa3a/scipy/stats/stats.py#L1330
 def _ztest_p(z, ha):
     if ha == 'less':
-        p = stats.norm.cdf(z)
+        p = st.norm.cdf(z)
     elif ha == 'greater':
-        p = stats.norm.sf(z)
+        p = st.norm.sf(z)
     elif ha == 'two-sided':
-        p = 2 * stats.norm.sf(abs(z))
+        p = 2 * st.norm.sf(abs(z))
         
     return p
 
@@ -76,7 +76,7 @@ def ztest_2prop(x_treat, n_treat, x_ctrl, n_ctrl, alpha=0.05, ha='two-sided'):
 
     # Calculate the critical z-score
     one_sided = ha in {'greater', 'less'}
-    z_critical = stats.norm.ppf(1 - alpha / (1 + (not one_sided)))
+    z_critical = st.norm.ppf(1 - alpha / (1 + (not one_sided)))
 
     # Find the lower and upper CIs boundaries
     # n.b.: in units of the difference between p_treat and p_ctrl
@@ -118,11 +118,11 @@ def ztest_2prop(x_treat, n_treat, x_ctrl, n_ctrl, alpha=0.05, ha='two-sided'):
 # https://github.com/scipy/scipy/blob/47bb6febaa10658c72962b9615d5d5aa2513fa3a/scipy/stats/stats.py#L5661
 def _ttest_p(t, dof, ha):
     if ha == 'less':
-        p = stats.t.cdf(t, dof)
+        p = st.t.cdf(t, dof)
     elif ha == 'greater':
-        p = stats.t.sf(t, dof)
+        p = st.t.sf(t, dof)
     elif ha == 'two-sided':
-        p = 2 * stats.t.sf(abs(t), dof)
+        p = 2 * st.t.sf(abs(t), dof)
         
     return p
 
@@ -162,7 +162,7 @@ def welch_ttest(treat, ctrl, alpha=0.05, ha='two-sided'):
     
     # Calculate the critical t-score
     one_sided = ha in {'greater', 'less'}
-    t_critical = stats.t.ppf(1 - alpha / (1 + (not one_sided)), dof)
+    t_critical = st.t.ppf(1 - alpha / (1 + (not one_sided)), dof)
     
     # Find the lower and upper CIs boundaries
     # n.b.: in units of the difference between mean_treat and mean_ctrl
@@ -249,7 +249,7 @@ def pop_prop_sample_size(d, p=0.5, N=None, cl=0.95):
     alpha = 1-cl
 
     # Calculate the z-score
-    z = stats.norm.ppf(1-alpha/2)
+    z = st.norm.ppf(1-alpha/2)
 
     # If N is provided, assume a finite population and use the finite population correction
     if N:
@@ -293,7 +293,7 @@ def pop_prop_confint(p, n, cl=0.95):
     alpha = 1-cl
 
     # Calculate the z-score
-    z = stats.norm.ppf(1-alpha/2)
+    z = st.norm.ppf(1-alpha/2)
 
     # Calculate the variance in p
     var_p = p*(1-p)/n
