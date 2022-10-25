@@ -1,4 +1,4 @@
-from math import sqrt
+import math
 import scipy.stats as st
 import numpy as np
 import pandas as pd
