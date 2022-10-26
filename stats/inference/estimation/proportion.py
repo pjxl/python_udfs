@@ -69,16 +69,16 @@ def sample_size(
 
 
 def confint(
-	prop: float, sample_size: int, alpha: float=0.05, method: str='normal'
+	success_count: int, sample_size: int, alpha: float=0.05, method: str='normal'
 	) -> Tuple[float]:
 	"""
 	Calculates the confidence interval for an estimate of a population proportion.
 	Parameters
 	----------
-		prop : float in (0, 1)
-			The observed proportion of observations in a sample having a given characteristic.
+		success_count : int
+			The number of observations in the sample having the given characteristic.
 		sample_size : int
-			The number of observations in the sample.
+			The total number of observations in the sample.
 		alpha : float in (0, 1), default 0.5
 			The desired alpha level (1 - confidence level), defaulting to 0.05, i.e a 95% CL.
 		method : str in {'normal', 'wilson'}, default 'normal'
@@ -105,6 +105,8 @@ def confint(
 	.. [*] Wilson score interval: https://en.wikipedia.org/wiki/Binomial_proportion_confidence_interval
 	.. [*] Wilson score interval: https://www.itl.nist.gov/div898/handbook/prc/section2/prc241.htm
 	"""
+	# Find the sample proportion
+	prop = success_count/sample_size
 
 	# Find critical value (z-score)
 	cv = st.norm.ppf(1-alpha/2)
@@ -122,15 +124,13 @@ def confint(
 		moe = margin_of_error(cv, se)
 	
 	elif method == 'wilson':
-		# Get counts of successes and failures
-		n_success = int(round(prop*sample_size))
-		n_fail = sample_size-n_success
+		fail_count = sample_size-success_count
 
 		# Square the z-score
 		cv_sq = cv**2
 
 		# Calculate the center of the interval
-		center = (n_success+cv_sq/2)/(sample_size+cv_sq)
+		center = (success_count+cv_sq/2)/(sample_size+cv_sq)
 
 		# Find margin of error
 		moe = cv/(1+cv_sq/sample_size) * math.sqrt(var + cv_sq/(4*sample_size**2))
@@ -145,7 +145,7 @@ def confint(
 
 
 def strat_proportion(
-    props: Union[npt.NDArray[np.float64], 'pd.Series[np.float64]'], 
+    success_counts: Union[npt.NDArray[np.int64], 'pd.Series[np.int64]'], 
     strat_sizes: Union[npt.NDArray[np.int64], 'pd.Series[np.int64]']
     ) -> np.float64:
     """
@@ -153,8 +153,8 @@ def strat_proportion(
 
     Parameters
     ----------
-        props : array-like of floats
-            The proportions observed in each sample.
+        success_counts : array-like of ints
+			The number of observations in each sample having the given characteristic.
         strat_sizes : array-like of ints
             The number of observations in each stratum, whose grand total equals the size of the population.
 
@@ -171,6 +171,7 @@ def strat_proportion(
     .. [*] Lohr, S.: "Sampling: Design and Analysis", 2nd ed., ch. 3 (93-95)
     .. [*] https://stattrek.com/survey-research/stratified-sampling-analysis
     """
+	props = success_counts/sample_sizes
     
     # Find total population size
     popl_size = np.sum(strat_sizes)
@@ -182,7 +183,7 @@ def strat_proportion(
 
 
 def strat_confint(
-    props: Union[npt.NDArray[np.float64], 'pd.Series[np.float64]'], 
+    success_counts: Union[npt.NDArray[np.int64], 'pd.Series[np.int64]'], 
     sample_sizes: Union[npt.NDArray[np.int64], 'pd.Series[np.int64]'], 
     strat_sizes: Union[npt.NDArray[np.int64], 'pd.Series[np.int64]'], 
     alpha: float=0.05
@@ -192,8 +193,8 @@ def strat_confint(
 
     Parameters
     ----------
-        props : array-like of floats
-            The proportions observed in each sample.
+    	success_counts : array-like of ints
+			The number of observations in each sample having the given characteristic.
         sample_sizes : array-like of ints
             The sample size of each stratum.
         strat_sizes : array-like of ints
@@ -203,7 +204,7 @@ def strat_confint(
 
     Returns
     -------
-        ci_lower, ci_upper : tuple
+        ci_lower, ci_upper : tuple of floats
             The lower and upper bounds of the confidence interval around the (weighted) sample proportion.
 
     Notes
@@ -215,6 +216,7 @@ def strat_confint(
     .. [*] Lohr, S.: "Sampling: Design and Analysis", 2nd ed., ch. 3 (pp. 93-95)
     .. [*] https://stattrek.com/survey-research/stratified-sampling-analysis
     """
+	props = success_counts/sample_sizes
 
     # Find critical value (z-score)
     cv = st.norm.ppf(1-alpha/2)
@@ -223,7 +225,7 @@ def strat_confint(
     popl_size = np.sum(strat_sizes)
 
     # Find weighted sample proportion
-    prop = strat_proportion(props, strat_sizes)
+    prop = strat_proportion(success_counts, strat_sizes)
     
     # Find variance of each stratum proportion
     var = sample_sizes/(sample_sizes-1) * props * (1-props)
