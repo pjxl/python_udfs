@@ -69,11 +69,10 @@ def sample_size(
 
 
 def confint(
-    prop: float, sample_size: int, alpha: float=0.05
+    prop: float, sample_size: int, alpha: float=0.05, method: string='normal'
     ) -> Tuple[float]:
     """
-    Calculates the confidence interval for an estimate of a population proportion, using
-    the normal approximation.
+    Calculates the confidence interval for an estimate of a population proportion.
 
     Parameters
     ----------
@@ -83,23 +82,30 @@ def confint(
             The number of observations in the sample.
         alpha : float in (0, 1), default 0.5
             The desired alpha level (1 - confidence level), defaulting to 0.05, i.e a 95% CL.
+        method : string in {'normal', 'wilson'}, default 'normal'
+        	The method to use in calculating the confidence interval. Supported methods:
 
+        	- 'normal' : normal approximation
+        	- 'wilson' : Wilson score interval
+    
     Returns
     -------
         ci_lower, ci_upper : tuple of floats
             The lower and upper bounds of the confidence interval around `prop`.
-
+    
     Notes
     -----
-    Validated against: https://www.statskingdom.com/proportion-confidence-interval-calculator.html
+    Validated normal approximation against: https://www.statskingdom.com/proportion-confidence-interval-calculator.html
     
-    Equivalent to `statsmodels.stats.proportion.proportion_confint()` using `method='normal'`.
+    Equivalent to `statsmodels.stats.proportion.proportion_confint()` for available methods.
     
-    TODO: Incorporate additional esimation methods, e.g. Clopper-Pearson and especially Wilson score interval. 
-
+    TODO: Incorporate additional esimation methods, e.g. Clopper-Pearson.
+    
     References
     ----------
-    .. [*] https://online.stat.psu.edu/stat506/lesson/2/2.2
+    .. [*] Normal approximation: https://online.stat.psu.edu/stat506/lesson/2/2.2
+    .. [*] Wilson score interval: https://en.wikipedia.org/wiki/Binomial_proportion_confidence_interval
+    .. [*] Wilson score interval: https://www.itl.nist.gov/div898/handbook/prc/section2/prc241.htm
     """
 
     # Find critical value (z-score)
@@ -108,14 +114,34 @@ def confint(
     # Find variance in p
     var = prop*(1-prop)/sample_size
     
-    # Find the standard error
-    se = math.sqrt(var)
+    if method = 'normal':
+    	center = prop
 
-    # Find margin of error
-    moe = margin_of_error(cv, se)
+    	# Find the standard error
+    	se = math.sqrt(var)
 
-    # Find lower and upper bounds of CI
-    ci_lower, ci_upper = prop-moe, prop+moe
+    	# Find margin of error
+    	moe = margin_of_error(cv, se)
+	
+	elif method = 'wilson':
+		# Get counts of successes and failures
+		n_success = int(round(prop*sample_size))
+		n_fail = sample_size-n_success
+
+		# Square the z-score
+		cv_sq = cv**2
+
+		# Calculate the center of the interval
+		center = (n_success+cv_sq/2)/(sample_size+cv_sq)
+
+		# Find margin of error
+		moe = cv/(1+cv_sq/sample_size) * math.sqrt(var + cv_sq/(4*sample_size**2))
+	
+	else:
+		raise NotImplementedError(f"method {method} is not available")
+	
+	# Find lower and upper bounds of CI
+    ci_lower, ci_upper = center-moe, center+moe
 
     return ci_lower, ci_upper
 
