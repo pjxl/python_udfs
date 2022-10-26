@@ -8,7 +8,7 @@ import numpy as np
 import numpy.typing as npt
 from typing import Union, Tuple
 
-from stats.inference.core import margin_of_error
+from ..core import margin_of_error
 
 
 def sample_size(
