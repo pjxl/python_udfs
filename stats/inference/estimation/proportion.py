@@ -34,6 +34,8 @@ def sample_size(
 
     Notes
     -----
+    Validated against: https://www.statskingdom.com/50_ci_sample_size.html
+    
     When `popl_size=None`, equivalent to `statsmodels.stats.proportion.samplesize_confint_proportion()`:
     https://www.statsmodels.org/dev/generated/statsmodels.stats.proportion.samplesize_confint_proportion.html
 
@@ -83,7 +85,11 @@ def confint(
 
     Notes
     -----
-	  Equivalent to `statsmodels.stats.proportion.proportion_confint()` using `method='normal'`.
+    Validated against: https://www.statskingdom.com/proportion-confidence-interval-calculator.html
+    
+    Equivalent to `statsmodels.stats.proportion.proportion_confint()` using `method='normal'`.
+    
+    TODO: Incorporate additional esimation methods, e.g. Clopper-Pearson and especially Wilson score interval. 
 
     References
     ----------
