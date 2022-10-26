@@ -152,7 +152,8 @@ def confint(
 
 
 def strat_proportion(
-	success_counts: Union[npt.NDArray[np.int64], 'pd.Series[np.int64]'], 
+	success_counts: Union[npt.NDArray[np.int64], 'pd.Series[np.int64]'],
+	sample_sizes: Union[npt.NDArray[np.int64], 'pd.Series[np.int64]'], 
 	strat_sizes: Union[npt.NDArray[np.int64], 'pd.Series[np.int64]']
 	) -> np.float64:
 	"""
@@ -162,6 +163,8 @@ def strat_proportion(
 	----------
 		success_counts : array-like of ints
 			The number of observations in each sample having the given characteristic.
+		sample_sizes : array-like of ints
+			The sample size of each stratum.
 		strat_sizes : array-like of ints
 			The number of observations in each stratum, whose grand total equals the size of the population.
 
@@ -234,7 +237,7 @@ def strat_confint(
 	popl_size = np.sum(strat_sizes)
 
 	# Find weighted sample proportion
-	prop = strat_proportion(success_counts, strat_sizes)
+	prop = strat_proportion(success_counts, sample_sizes, strat_sizes)
 	
 	# Find variance of each stratum proportion
 	var = sample_sizes/(sample_sizes-1) * props * (1-props)
