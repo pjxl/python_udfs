@@ -1,3 +1,7 @@
+"""
+Functions for estimating the true population proportion based on a sample statistic.
+"""
+
 import math
 import scipy.stats as st
 import numpy as np
