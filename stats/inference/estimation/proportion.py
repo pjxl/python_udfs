@@ -175,10 +175,11 @@ def strat_confint(
 
     Notes
     -----
+    Validated SE against Lohr, S.: "Sampling: Design and Analysis", 2nd ed, example 3.4 (p. 94)
 
     References
     ----------
-    .. [*] Lohr, S.: "Sampling: Design and Analysis", 2nd ed., ch. 3 (93-95)
+    .. [*] Lohr, S.: "Sampling: Design and Analysis", 2nd ed., ch. 3 (pp. 93-95)
     .. [*] https://stattrek.com/survey-research/stratified-sampling-analysis
     """
 
