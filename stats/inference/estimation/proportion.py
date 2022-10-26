@@ -69,7 +69,7 @@ def sample_size(
 
 
 def confint(
-	prop: float, sample_size: int, alpha: float=0.05, method: string='normal'
+	prop: float, sample_size: int, alpha: float=0.05, method: str='normal'
 	) -> Tuple[float]:
 	"""
 	Calculates the confidence interval for an estimate of a population proportion.
@@ -81,7 +81,7 @@ def confint(
 			The number of observations in the sample.
 		alpha : float in (0, 1), default 0.5
 			The desired alpha level (1 - confidence level), defaulting to 0.05, i.e a 95% CL.
-		method : string in {'normal', 'wilson'}, default 'normal'
+		method : str in {'normal', 'wilson'}, default 'normal'
 			The method to use in calculating the confidence interval. Supported methods:
 			- 'normal' : normal approximation
 			- 'wilson' : Wilson score interval
