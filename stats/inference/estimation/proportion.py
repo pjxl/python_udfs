@@ -69,59 +69,57 @@ def sample_size(
 
 
 def confint(
-    prop: float, sample_size: int, alpha: float=0.05, method: string='normal'
-    ) -> Tuple[float]:
-    """
-    Calculates the confidence interval for an estimate of a population proportion.
+	prop: float, sample_size: int, alpha: float=0.05, method: string='normal'
+	) -> Tuple[float]:
+	"""
+	Calculates the confidence interval for an estimate of a population proportion.
+	Parameters
+	----------
+		prop : float in (0, 1)
+			The observed proportion of observations in a sample having a given characteristic.
+		sample_size : int
+			The number of observations in the sample.
+		alpha : float in (0, 1), default 0.5
+			The desired alpha level (1 - confidence level), defaulting to 0.05, i.e a 95% CL.
+		method : string in {'normal', 'wilson'}, default 'normal'
+			The method to use in calculating the confidence interval. Supported methods:
+			- 'normal' : normal approximation
+			- 'wilson' : Wilson score interval
+	
+	Returns
+	-------
+		ci_lower, ci_upper : tuple of floats
+			The lower and upper bounds of the confidence interval around `prop`.
+	
+	Notes
+	-----
+	Validated normal approximation against: https://www.statskingdom.com/proportion-confidence-interval-calculator.html
+	
+	Equivalent to `statsmodels.stats.proportion.proportion_confint()` for available methods.
+	
+	TODO: Incorporate additional esimation methods, e.g. Clopper-Pearson.
+	
+	References
+	----------
+	.. [*] Normal approximation: https://online.stat.psu.edu/stat506/lesson/2/2.2
+	.. [*] Wilson score interval: https://en.wikipedia.org/wiki/Binomial_proportion_confidence_interval
+	.. [*] Wilson score interval: https://www.itl.nist.gov/div898/handbook/prc/section2/prc241.htm
+	"""
 
-    Parameters
-    ----------
-        prop : float in (0, 1)
-            The observed proportion of observations in a sample having a given characteristic.
-        sample_size : int
-            The number of observations in the sample.
-        alpha : float in (0, 1), default 0.5
-            The desired alpha level (1 - confidence level), defaulting to 0.05, i.e a 95% CL.
-        method : string in {'normal', 'wilson'}, default 'normal'
-        	The method to use in calculating the confidence interval. Supported methods:
+	# Find critical value (z-score)
+	cv = st.norm.ppf(1-alpha/2)
 
-        	- 'normal' : normal approximation
-        	- 'wilson' : Wilson score interval
-    
-    Returns
-    -------
-        ci_lower, ci_upper : tuple of floats
-            The lower and upper bounds of the confidence interval around `prop`.
-    
-    Notes
-    -----
-    Validated normal approximation against: https://www.statskingdom.com/proportion-confidence-interval-calculator.html
-    
-    Equivalent to `statsmodels.stats.proportion.proportion_confint()` for available methods.
-    
-    TODO: Incorporate additional esimation methods, e.g. Clopper-Pearson.
-    
-    References
-    ----------
-    .. [*] Normal approximation: https://online.stat.psu.edu/stat506/lesson/2/2.2
-    .. [*] Wilson score interval: https://en.wikipedia.org/wiki/Binomial_proportion_confidence_interval
-    .. [*] Wilson score interval: https://www.itl.nist.gov/div898/handbook/prc/section2/prc241.htm
-    """
+	# Find variance in p
+	var = prop*(1-prop)/sample_size
+	
+	if method == 'normal':
+		center = prop
 
-    # Find critical value (z-score)
-    cv = st.norm.ppf(1-alpha/2)
+		# Find the standard error
+		se = math.sqrt(var)
 
-    # Find variance in p
-    var = prop*(1-prop)/sample_size
-    
-    if method == 'normal':
-    	center = prop
-
-    	# Find the standard error
-    	se = math.sqrt(var)
-
-    	# Find margin of error
-    	moe = margin_of_error(cv, se)
+		# Find margin of error
+		moe = margin_of_error(cv, se)
 	
 	elif method == 'wilson':
 		# Get counts of successes and failures
@@ -141,9 +139,9 @@ def confint(
 		raise NotImplementedError(f"method {method} is not available")
 	
 	# Find lower and upper bounds of CI
-    ci_lower, ci_upper = center-moe, center+moe
+	ci_lower, ci_upper = center-moe, center+moe
 
-    return ci_lower, ci_upper
+	return ci_lower, ci_upper
 
 
 def strat_proportion(
