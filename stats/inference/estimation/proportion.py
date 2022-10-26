@@ -8,6 +8,8 @@ import numpy as np
 import numpy.typing as npt
 from typing import Union, Tuple
 
+from stats.inference.core import margin_of_error
+
 
 def sample_size(
     moe: float, prop: float=0.5, popl_size: int=None, alpha: float=0.05
@@ -105,9 +107,12 @@ def confint(
 
     # Find variance in p
     var = prop*(1-prop)/sample_size
+    
+    # Find the standard error
+    se = math.sqrt(var)
 
     # Find margin of error
-    moe = cv*math.sqrt(var)
+    moe = margin_of_error(cv, se)
 
     # Find lower and upper bounds of CI
     ci_lower, ci_upper = prop-moe, prop+moe
@@ -203,7 +208,7 @@ def strat_confint(
     se = np.sqrt(np.sum(strat_sizes**2 * (1/popl_size)**2 * (1-sample_sizes/strat_sizes) * var/sample_sizes))
 
     # Find margin of error
-    moe = cv*se
+    moe = margin_of_error(cv, se)
 
     # Find lower and upper bounds of CI
     ci_lower, ci_upper = prop-moe, prop+moe
