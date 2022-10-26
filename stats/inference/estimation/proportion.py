@@ -114,7 +114,7 @@ def confint(
     # Find variance in p
     var = prop*(1-prop)/sample_size
     
-    if method = 'normal':
+    if method == 'normal':
     	center = prop
 
     	# Find the standard error
@@ -123,7 +123,7 @@ def confint(
     	# Find margin of error
     	moe = margin_of_error(cv, se)
 	
-	elif method = 'wilson':
+	elif method == 'wilson':
 		# Get counts of successes and failures
 		n_success = int(round(prop*sample_size))
 		n_fail = sample_size-n_success
