@@ -194,7 +194,7 @@ def strat_confint(
 	sample_sizes: Union[npt.NDArray[np.int64], 'pd.Series[np.int64]'], 
 	strat_sizes: Union[npt.NDArray[np.int64], 'pd.Series[np.int64]'], 
 	alpha: float=0.05
-	):
+	) -> Tuple[float]:
 	"""
 	In a stratified sample setting, calculates the confidence interval for an estimate of a population proportion.
 
