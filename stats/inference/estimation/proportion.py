@@ -144,7 +144,7 @@ def confint(
 	ci_lower, ci_upper = center-moe, center+moe
 	
 	# Clips bounds to be in the interval [0, 1]
-	ci_lower, ci_upper = np.clip(ci_lower), np.clip(ci_upper)
+	ci_lower, ci_upper = np.clip(ci_lower, 0, 1), np.clip(ci_upper, 0, 1)
 
 	return ci_lower, ci_upper
 
@@ -247,6 +247,6 @@ def strat_confint(
 	ci_lower, ci_upper = prop-moe, prop+moe
 	
 	# Clips bounds to be in the interval [0, 1]
-	ci_lower, ci_upper = np.clip(ci_lower), np.clip(ci_upper)
+	ci_lower, ci_upper = np.clip(ci_lower, 0, 1), np.clip(ci_upper, 0, 1)
 
 	return ci_lower, ci_upper
