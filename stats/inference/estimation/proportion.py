@@ -135,7 +135,9 @@ def confint(
 		center = (success_count+cv_sq/2)/(sample_size+cv_sq)
 
 		# Find margin of error
-		moe = cv/(1+cv_sq/sample_size) * math.sqrt(var + cv_sq/(4*sample_size**2))
+		# The first of these formulas (commented out) is more succinct; the second is less susceptible to rounding errors when success_count=0
+		# moe = cv/(1+cv_sq/sample_size) * math.sqrt(var + cv_sq/(4*sample_size**2))
+		moe = cv/(sample_size+cv_sq)*math.sqrt((success_count*fail_count)/sample_size + cv_sq/4)
 	
 	else:
 		raise NotImplementedError(f"method {method} is not available")
