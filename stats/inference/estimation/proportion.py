@@ -44,6 +44,8 @@ def sample_size(
 	
 	When `popl_size=None`, equivalent to `statsmodels.stats.proportion.samplesize_confint_proportion()`:
 	https://www.statsmodels.org/dev/generated/statsmodels.stats.proportion.samplesize_confint_proportion.html
+	
+	Bounds are clipped to be in the interval [0, 1].
 
 	References
 	----------
@@ -140,6 +142,9 @@ def confint(
 	
 	# Find lower and upper bounds of CI
 	ci_lower, ci_upper = center-moe, center+moe
+	
+	# Clips bounds to be in the interval [0, 1]
+	ci_lower, ci_upper = np.clip(ci_lower), np.clip(ci_upper)
 
 	return ci_lower, ci_upper
 
@@ -210,6 +215,8 @@ def strat_confint(
 	Notes
 	-----
 	Validated SE against Lohr, S.: "Sampling: Design and Analysis", 2nd ed, example 3.4 (p. 94)
+	
+	Bounds are clipped to be in the interval [0, 1].
 
 	References
 	----------
@@ -238,5 +245,8 @@ def strat_confint(
 
 	# Find lower and upper bounds of CI
 	ci_lower, ci_upper = prop-moe, prop+moe
+	
+	# Clips bounds to be in the interval [0, 1]
+	ci_lower, ci_upper = np.clip(ci_lower), np.clip(ci_upper)
 
 	return ci_lower, ci_upper
