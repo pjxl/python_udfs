@@ -85,7 +85,7 @@ class BigQueryClient():
         if users:
             grantees.extend([f"'user:{i}'" for i in users])
         if groups:            
-            grantees.extend([f"'groups:{i}'" for i in groups])
+            grantees.extend([f"'group:{i}'" for i in groups])
         
         # GRANT TABLE appears to require backticks around the project ID, 
         # To avoid double-backticking, strip out any pre-existing backticks in the `table` string
