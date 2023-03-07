@@ -209,7 +209,7 @@ def strat_confint(
 			The sample size of each stratum.
 		strat_sizes : array-like of ints
 			The number of observations in each stratum, whose grand total equals the size of the population.
-		alpha : float in (0, 1), default 0.5
+		alpha : float in (0, 1), default 0.05
 			The desired alpha level (1 - confidence level), defaulting to 0.05, i.e a 95% CL.
 
 	Returns
