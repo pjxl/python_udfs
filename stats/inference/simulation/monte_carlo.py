@@ -93,7 +93,7 @@ class MonteCarlo:
         self._fit_var(var, PERT_distribution, low=low, mode=mode, high=high, lamb=lamb)
 
 
-    def plot_sampling_distribution(self, component, fig, ax, n=1000):
+    def plot_sampling_distribution(self, component, n=1000, fig=None, ax=None):
         self._initialize_rng()
 
         if isinstance(component, str) and component in self.distribution:
@@ -123,6 +123,6 @@ class MonteCarlo:
         self._confint(confint_alpha)
 
 
-    def plot_simulation_results(self, fig, ax):
+    def plot_simulation_results(self, fig=None, ax=None):
         if self.simulation:  
             return self._plot_pdf(self.simulation, n=len(self.simulation), confint=True, fig=fig, ax=ax)
