@@ -44,15 +44,9 @@ class MonteCarlo:
         ax.set_title(title)
         
         if confint:
-            ax.vlines(self.confint, *ax.get_ylim(), linestyle='dashed', colors=['black']*2)
+            ax.vlines(confint, *ax.get_ylim(), linestyle='dashed', colors=['black']*2)
         
         return fig, ax
-
-
-    def _confint(self, alpha):
-        pctiles = alpha/2, 1-alpha/2
-        ci_lower, ci_upper = np.quantile(self.simulation, np.array(pctiles))
-        self.confint = ci_lower, ci_upper
 
 
     def exact_value(self, var, val):
@@ -120,9 +114,13 @@ class MonteCarlo:
                 self.distr_pdf.update({var: p})
                 plt.close()
 
-        self._confint(confint_alpha)
+    
+    def simulation_confint(self, alpha):
+        pctiles = alpha/2, 1-alpha/2
+        ci_lower, ci_upper = np.quantile(self.simulation, np.array(pctiles))
+        return ci_lower, ci_upper
 
 
-    def plot_simulation_results(self, fig=None, ax=None):
+    def plot_simulation_results(self, fig=None, ax=None, confint=None):
         if self.simulation:  
-            return self._plot_pdf(self.simulation, n=len(self.simulation), confint=True, fig=fig, ax=ax)
+            return self._plot_pdf(self.simulation, n=len(self.simulation), confint=confint, fig=fig, ax=ax)
