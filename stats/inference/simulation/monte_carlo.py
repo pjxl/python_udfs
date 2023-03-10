@@ -55,6 +55,13 @@ class MonteCarlo:
         self.confint = ci_lower, ci_upper
 
 
+    def exact_value(self, var, val):
+        def degenerate_distribution(**kwargs):
+            return self.rng.uniform(low=val, high=val)
+
+        self._fit_var(var, degenerate_distribution, val=val)
+
+
     def uniform(self, var, low, high):
         def uniform_distribution(**kwargs):
             return self.rng.uniform(low, high)
