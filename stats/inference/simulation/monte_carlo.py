@@ -9,7 +9,7 @@ class MonteCarlo:
     """
     def __init__(self, seed=None):
         self.seed = seed
-        self.distribution, self.distr_args, self.distr_samples, self.distr_pdf = {}, {}, {}, {}
+        self.distribution, self.distr_args, self.distr_pdf = {}, {}, {}
         self.var = []
 
 
@@ -103,6 +103,7 @@ class MonteCarlo:
     def simulate(self, func=None, n=1000, confint_alpha=0.05):
         self._initialize_rng()
         self.simulation = []
+        self.distr_samples = {}
 
         if func and callable(func):
             for i in range(n):
