@@ -20,7 +20,9 @@ class MonteCarlo:
     def _fit_var(self, var, distribution, **kwargs):
         self.distribution.update({var: distribution})
         self.distr_args.update({var: {**kwargs}})
-        self.var.append(var)
+
+        if var not in self.var:
+            self.var.append(var)
     
 
     def _draw(self, var, write=True):
