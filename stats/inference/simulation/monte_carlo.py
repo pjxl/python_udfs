@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+from collections import defaultdict
 
 
 class MonteCarlo:
@@ -96,7 +97,7 @@ class MonteCarlo:
     def simulate(self, func, n=1000):
         self._initialize_rng()
         self.simulations = []
-        self.samples = dict.fromkeys(self.distributions.keys(), [])
+        self.samples = defaultdict(list)
 
         if callable(func):
             for i in range(n):
@@ -116,6 +117,7 @@ class MonteCarlo:
                 plt.close()
 
         self.simulations = np.array(self.simulations)
+        self.samples = dict(self.samples)
 
     
     # def simulation_confint(self, alpha):
