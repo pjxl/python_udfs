@@ -90,7 +90,7 @@ class MonteCarlo:
 
 
     # Each MonteCarlo instance has a `pdf` property that is an instance of DistributionGenerator
-    # DistributionGenerator is an abstractive layer who main purpose is to map a user's input definitions to the appropriate numpy Generator
+    # DistributionGenerator is an abstractive layer whose main purpose is to map a user's input definitions to the appropriate numpy Generator
     class DistributionGenerator:
         def __init__(self, outer):
             self.outer = outer
