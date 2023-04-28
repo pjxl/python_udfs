@@ -6,11 +6,11 @@ figure.edgecolor :   white
 axes.titlesize : 12
 axes.titlelocation : left
 axes.titlepad : 12
-axes.labelsize : 12
+# axes.labelsize : 12
 axes.labelpad : 12
 
 ### GRID
-grid.color : gainsboro
+grid.color : whitesmoke
 
 ### LINES
 lines.linewidth : 1.5
