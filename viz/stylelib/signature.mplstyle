@@ -3,7 +3,7 @@ figure.facecolor :   white
 figure.edgecolor :   white
 
 ### AXES
-axes.titlesize : 12
+# axes.titlesize : 12
 axes.titlelocation : left
 axes.titlepad : 12
 # axes.labelsize : 12
