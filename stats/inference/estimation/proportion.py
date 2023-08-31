@@ -28,7 +28,7 @@ def sample_size(
 		popl_size : int, default None
 			The size of the population. When `None`, assume an infinite population, and ignore the finite
 			population correction (FPC).
-		alpha : float in (0, 1), default 0.5
+		alpha : float in (0, 1), default 0.05
 			The desired alpha level (1 - confidence level), defaulting to 0.05, i.e a 95% CL.
 
 	Returns
