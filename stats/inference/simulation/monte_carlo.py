@@ -85,12 +85,12 @@ class MonteCarlo:
                 fig, ax = plt.subplots()
 
             if kind=='pdf':
-                sns.histplot(self, ax=ax, kde=True, stat='probability', color=color)
+                sns.histplot(samples, ax=ax, kde=True, stat='probability', color=color)
             elif kind in ['cdf', 'ccdf']:
                 ccdf = True if kind=='ccdf' else False
-                sns.ecdfplot(self, ax=ax, stat='proportion', complementary=ccdf, color=color)
+                sns.ecdfplot(samples, ax=ax, stat='proportion', complementary=ccdf, color=color)
             else:
-                sns.histplot(self, ax=ax, kde=True, stat='probability', color=color)
+                sns.histplot(samples, ax=ax, kde=True, stat='probability', color=color)
 
             return ax
 
