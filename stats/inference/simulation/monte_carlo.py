@@ -152,12 +152,16 @@ class MonteCarlo:
             return obj
 
 
-        def plot(self, kind='pdf', fig=None, ax=None):
-            cume = True if kind=='cdf' else False
-
+        def plot(self, kind='pdf', fig=None, ax=None, color=None):
             if not fig and not ax:
                 fig, ax = plt.subplots()
-            
-            sns.histplot(self, ax=ax, kde=True, stat='probability', cumulative=cume)
+
+            if kind=='pdf':
+                sns.histplot(self, ax=ax, kde=True, stat='probability', color=color)
+            elif kind in ['cdf', 'ccdf']:
+                ccdf = True if kind=='ccdf' else False
+                sns.ecdfplot(self, ax=ax, kde=True, stat='probability', complementary=ccdf, color=color)
+            else:
+                sns.histplot(self, ax=ax, kde=True, stat='probability', color=color)
             
             return fig, ax
