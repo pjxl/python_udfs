@@ -74,19 +74,25 @@ class MonteCarlo:
 
 
         # Plot the sampling distribution of the input
-        def plot(self, n=10000, fig=None, ax=None):
+        def plot(self, n=10000, ax=None, kind='pdf', color=None):
             self.outer._initialize_rng()
             
             samples = []
             for i in range(n):
                 samples.append(self.draw())            
             
-            if not fig and not ax:
+            if not ax:
                 fig, ax = plt.subplots()
 
-            sns.histplot(samples, ax=ax, kde=True, stat='probability')
+            if kind=='pdf':
+                sns.histplot(self, ax=ax, kde=True, stat='probability', color=color)
+            elif kind in ['cdf', 'ccdf']:
+                ccdf = True if kind=='ccdf' else False
+                sns.ecdfplot(self, ax=ax, kde=True, stat='proportion', complementary=ccdf, color=color)
+            else:
+                sns.histplot(self, ax=ax, kde=True, stat='probability', color=color)
 
-            return fig, ax
+            return ax
 
 
     # Each MonteCarlo instance has a `pdf` property that is an instance of DistributionGenerator
@@ -152,16 +158,16 @@ class MonteCarlo:
             return obj
 
 
-        def plot(self, kind='pdf', fig=None, ax=None, color=None):
-            if not fig and not ax:
+        def plot(self, ax=None, kind='pdf', color=None):
+            if not ax:
                 fig, ax = plt.subplots()
 
             if kind=='pdf':
                 sns.histplot(self, ax=ax, kde=True, stat='probability', color=color)
             elif kind in ['cdf', 'ccdf']:
                 ccdf = True if kind=='ccdf' else False
-                sns.ecdfplot(self, ax=ax, kde=True, stat='probability', complementary=ccdf, color=color)
+                sns.ecdfplot(self, ax=ax, kde=True, stat='proportion', complementary=ccdf, color=color)
             else:
                 sns.histplot(self, ax=ax, kde=True, stat='probability', color=color)
             
-            return fig, ax
+            return ax
