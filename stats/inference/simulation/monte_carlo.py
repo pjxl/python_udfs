@@ -92,6 +92,8 @@ class MonteCarlo:
             else:
                 sns.histplot(samples, ax=ax, kde=True, stat='probability', color=color)
 
+            ax.set_ylabel(f'Sampling {kind.upper()}')
+
             return ax
 
 
@@ -169,5 +171,7 @@ class MonteCarlo:
                 sns.ecdfplot(self, ax=ax, stat='proportion', complementary=ccdf, color=color)
             else:
                 sns.histplot(self, ax=ax, kde=True, stat='probability', color=color)
+
+            ax.set_ylabel(f'Simulated {kind.upper()}')
             
             return ax
