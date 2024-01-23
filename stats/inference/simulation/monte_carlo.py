@@ -88,7 +88,7 @@ class MonteCarlo:
                 sns.histplot(self, ax=ax, kde=True, stat='probability', color=color)
             elif kind in ['cdf', 'ccdf']:
                 ccdf = True if kind=='ccdf' else False
-                sns.ecdfplot(self, ax=ax, kde=True, stat='proportion', complementary=ccdf, color=color)
+                sns.ecdfplot(self, ax=ax, stat='proportion', complementary=ccdf, color=color)
             else:
                 sns.histplot(self, ax=ax, kde=True, stat='probability', color=color)
 
@@ -166,7 +166,7 @@ class MonteCarlo:
                 sns.histplot(self, ax=ax, kde=True, stat='probability', color=color)
             elif kind in ['cdf', 'ccdf']:
                 ccdf = True if kind=='ccdf' else False
-                sns.ecdfplot(self, ax=ax, kde=True, stat='proportion', complementary=ccdf, color=color)
+                sns.ecdfplot(self, ax=ax, stat='proportion', complementary=ccdf, color=color)
             else:
                 sns.histplot(self, ax=ax, kde=True, stat='probability', color=color)
             
