@@ -71,7 +71,7 @@ def sample_size(
 
 
 def confint(
-	success_count: int, sample_size: int, alpha: float=0.05, method: str='normal'
+	success_count: int, sample_size: int, alpha: float=0.05, method: str='wilson'
 	) -> Tuple[float]:
 	"""
 	Calculates the confidence interval for an estimate of a population proportion.
@@ -83,10 +83,10 @@ def confint(
 			The total number of observations in the sample.
 		alpha : float in (0, 1), default 0.5
 			The desired alpha level (1 - confidence level), defaulting to 0.05, i.e a 95% CL.
-		method : str in {'normal', 'wilson'}, default 'normal'
+		method : str in {'normal', 'wilson'}, default 'wilson'
 			The method to use in calculating the confidence interval. Supported methods:
 			- 'normal' : normal approximation
-			- 'wilson' : Wilson score interval
+			- 'wilson' : Wilson score interval (without continuity correction)
 	
 	Returns
 	-------
@@ -98,8 +98,16 @@ def confint(
 	Validated normal approximation against: https://www.statskingdom.com/proportion-confidence-interval-calculator.html
 	
 	Equivalent to `statsmodels.stats.proportion.proportion_confint()` for available methods.
-	
-	TODO: Incorporate additional esimation methods, e.g. Clopper-Pearson.
+
+	General recommendations for `method` selection:
+
+	- For large sample sizes, the Normal approximation can be sufficient. However, it can perform poorly when the sample size is small or the proportion is close to 0 or 1. It is simple to calculate but is generally not recommended except for large sample sizes (typically when both np and n(1-p) are greater than 5, where n is the sample size and p is the observed proportion).
+	- The Wilson score interval (without continuity correction) is often recommended for most situations due to its balance between accuracy and conservatism. It performs well across a wide range of sample sizes and proportions.
+	- The Wilson score interval (with continuity correction) can be used for small sample sizes or when an extra conservative estimate is desired, though it may be overly conservative.
+	- The Clopper-Pearson interval is recommended when you want to ensure the interval is extremely reliable, regardless of the width of the interval, especially for very small samples or when regulatory requirements demand the most conservative approach.
+
+	TODO: 
+ 	- Incorporate additional esimation methods, e.g. Clopper-Pearson
 	
 	References
 	----------
